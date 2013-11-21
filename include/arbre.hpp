@@ -62,8 +62,5 @@ Noeud* pere(const Noeud &N);
 
 Noeud finBloc(const Arbre &H, const Noeud &N);
 
-Arbre Modification (const Arbre &H, const Symbole s);
-
-
 
 #endif

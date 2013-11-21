@@ -14,7 +14,7 @@ Noeud* Noeud_creerVide(){
 	retour = (Noeud*)malloc(sizeof(Noeud));
 	/*On initialise la structure*/
 	retour->poids = 0;
-	retour->caractere = '';
+	retour->caractere = ' ';
 	retour->pere = NULL;
 	retour->filsDroit = NULL;
 	retour->filsGauche = NULL;
@@ -40,10 +40,12 @@ Arbre* Arbre_creerVide(){
 }
 
 void Noeud_detruire(Noeud *N){
-	if(N!=NULL){
+	if(N!=NULL && !Noeud_estFeuille(N)){
 		/*On libère que les fils et pas les voisins*/
 		Noeud_detruire(N->filsGauche);
 		Noeud_detruire(N->filsDroit);
+		free(N);
+	}else if (Noeud_estFeuille(N)){
 		free(N);
 	}else{
 		fprintf(stderr, "On essaye de détruire un noeud non alloué.\n");
@@ -61,5 +63,7 @@ void Arbre_detruire(Arbre *H){
 	}
 }
 
-
+int Noeud_estFeuille(Noeud *N){
+	return N->filsDroit==NULL && N->filsGauche==NULL;
+}
 
