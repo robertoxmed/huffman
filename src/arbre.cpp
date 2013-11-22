@@ -12,6 +12,7 @@
 Noeud* Noeud_creerVide(){
 	Noeud * retour;
 	retour = (Noeud*)malloc(sizeof(Noeud));
+
 	/*On initialise la structure*/
 	retour->poids = 0;
 	retour->caractere = ' ';
@@ -63,7 +64,20 @@ void Arbre_detruire(Arbre *H){
 	}
 }
 
-int Noeud_estFeuille(Noeud *N){
-	return N->filsDroit==NULL && N->filsGauche==NULL;
+int Noeud_estFeuille(const Noeud *N){
+	if(N->filsDroit==NULL && N->filsGauche==NULL)
+		return 1;
+	return 0;
 }
 
+Noeud* Noeud_get_filsGauche(const Noeud *N){
+	Noeud *retour;
+	retour=N->filsGauche;
+	return retour;
+}
+
+Noeud* Noeud_get_filsDroit(const Noeud *N){
+	Noeud *retour;
+	retour=N->filsDroit;
+	return retour;
+}
