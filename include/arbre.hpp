@@ -65,9 +65,18 @@ Noeud* Noeud_get_pere(const Noeud *N);
 Noeud* Noeud_get_suivant(const Noeud *N);
 //Renvoie un pointeur sur le précédant du Noeud
 Noeud* Noeud_get_precedant(const Noeud *N);
+//Renvoie le caractère du Noeud
+unsigned char Noeud_get_char(const Noeud *N);
+//Renvoie le poids du Noeud
+unsigned int Noeud_get_poids(const Noeud *N);
 
 /*Liste de mutateurs des éléments du Noeuds*/
 
+//Pour initialiser tous les pointeurs du Noeud N
+void Noeud_set_allPointers(Noeud *N, const Noeud *fg, const Noeud *fd,
+		const Noeud *suivant, const Noeud *precedant, const Noeud * pere);
+//Pour initialiser les valeurs du Noeud N
+void Noeud_set_allValues(Noeud *N, const unsigned char c, const unsigned int p);
 
 
 /*Spécifique pour l'arbre de Huffman*/

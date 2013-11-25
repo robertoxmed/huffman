@@ -75,9 +75,53 @@ Noeud* Noeud_get_filsGauche(const Noeud *N){
 	retour=N->filsGauche;
 	return retour;
 }
-
 Noeud* Noeud_get_filsDroit(const Noeud *N){
 	Noeud *retour;
 	retour=N->filsDroit;
 	return retour;
 }
+Noeud* Noeud_get_suivant(const Noeud *N){
+	Noeud *retour;
+	retour = N->suivant;
+	return retour;
+}
+Noeud* Noeud_get_precedant(const Noeud *N){
+	Noeud *retour;
+	retour = N->precedant;
+	return retour;
+}
+Noeud* Noeud_get_pere(const Noeud *N){
+	Noeud *retour;
+	retour = N->pere;
+	return retour;
+}
+unsigned char Noeud_get_char(const Noeud *N){
+	unsigned char c;
+	c = N->caractere;
+	return c;
+}
+unsigned int Noeud_get_poids(const Noeud *N){
+	unsigned int p;
+	p=N->poids;
+	return p;
+}
+
+void Noeud_set_allPointers(Noeud *N, const Noeud *fg, const Noeud *fd,
+		const Noeud *suivant, const Noeud *precedant, const Noeud * pere){
+	if( N!= NULL){
+		N->filsGauche = fg;
+		N->filsDroit = fd;
+		N->suivant = suivant;
+		N->precedant = precedant;
+		N->pere = pere;
+	}
+}
+
+void Noeud_set_allValues(Noeud *N, const unsigned char c, const unsigned int p){
+	if( N != NULL ){
+		N->caractere = c;
+		N->poids = p;
+	}
+}
+
+
