@@ -1,6 +1,6 @@
 CC=clang++
 CFLAGS=-Wall -pedantic -g
-EXEC=huffman-dynamique
+EXEC=huffman-regression
 TAR=MedinaRoberto.huffman-dynamique
 
 all: $(EXEC)

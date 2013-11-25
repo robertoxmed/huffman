@@ -73,15 +73,28 @@ unsigned int Noeud_get_poids(const Noeud *N);
 /*Liste de mutateurs des éléments du Noeuds*/
 
 //Pour initialiser tous les pointeurs du Noeud N
-void Noeud_set_allPointers(Noeud *N, const Noeud *fg, const Noeud *fd,
-		const Noeud *suivant, const Noeud *precedant, const Noeud * pere);
+void Noeud_set_allPointers(Noeud *N, Noeud *fg, Noeud *fd,
+	 Noeud *suivant, Noeud *precedant, Noeud * pere);
 //Pour initialiser les valeurs du Noeud N
-void Noeud_set_allValues(Noeud *N, const unsigned char c, const unsigned int p);
+void Noeud_set_allValues(Noeud *N, unsigned char c, unsigned int p);
 
 
 /*Spécifique pour l'arbre de Huffman*/
 
-Noeud* Noeud_finBloc(const Arbre &H, const Noeud &N);
+//Fonction de modification de l'arbre de Huffman
+Arbre* Arbre_Modification(Arbre *H, unsigned char c);
+
+//Fonction de Traitement de l'arbre de Huffman
+Arbre* Arbre_Traitement(Arbre *H, Noeud *Q);
+
+//Retourne le code correspondant au Noeud N
+unsigned char * Arbre_code(const Arbre *H, Noeud *N);
+
+//Va echanger la possition des deux Noeuds
+void Noeud_echanger(Noeud *N, Noeud *M);
+
+
+Noeud* Arbre_finBloc(const Arbre &H, const Noeud &N);
 
 
 //Affichage de l'arbre de Huffman

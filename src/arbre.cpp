@@ -40,6 +40,12 @@ Arbre* Arbre_creerVide(){
 	return H;
 }
 
+int Noeud_estFeuille(Noeud *N){
+	if(N->filsDroit==NULL && N->filsGauche==NULL)
+		return 1;
+	return 0;
+}
+
 void Noeud_detruire(Noeud *N){
 	if(N!=NULL && !Noeud_estFeuille(N)){
 		/*On libère que les fils et pas les voisins*/
@@ -62,12 +68,6 @@ void Arbre_detruire(Arbre *H){
 		fprintf(stderr, "On essaye de détruire un arbre non alloué.\n");
 		exit(1);
 	}
-}
-
-int Noeud_estFeuille(const Noeud *N){
-	if(N->filsDroit==NULL && N->filsGauche==NULL)
-		return 1;
-	return 0;
 }
 
 Noeud* Noeud_get_filsGauche(const Noeud *N){
@@ -106,8 +106,8 @@ unsigned int Noeud_get_poids(const Noeud *N){
 	return p;
 }
 
-void Noeud_set_allPointers(Noeud *N, const Noeud *fg, const Noeud *fd,
-		const Noeud *suivant, const Noeud *precedant, const Noeud * pere){
+void Noeud_set_allPointers(Noeud *N, Noeud *fg, Noeud *fd,
+	 Noeud *suivant, Noeud *precedant, Noeud * pere){
 	if( N!= NULL){
 		N->filsGauche = fg;
 		N->filsDroit = fd;
@@ -124,4 +124,67 @@ void Noeud_set_allValues(Noeud *N, const unsigned char c, const unsigned int p){
 	}
 }
 
+int Noeud_recherche_char(Noeud *N, unsigned char c){
+	if(Noeud_get_char(N)==c)
+		return 1;
+	else{
+		Noeud_recherche_char(N->fd,c);
+		Noeud_recherche_char(N->fg,c);
+	}
+	return 0;
+}
 
+int Arbre_recherche_char(Arbre *H, unsigned char c){
+	return Noeud_recherche_char(H->racine);
+}
+
+Arbre* Arbre_Traitement(Arbre *H, Noeud *Q){
+
+}
+
+Arbre* Arbre_Modification(Arbre *H, unsigned char c){
+	Noeud *Q;
+	if(!Arbre_recherche_char(H,c)){
+		Q = Noeud_get_pere(Arbre_get_feuilleSpeciale(H));
+		Noeud *N = Noeud_creerVide();
+		Noeud_set_allValues(c,1);
+		Noeud_set_allPointers();
+	}else{
+		Q = Arbre_get_feuille(H,c);
+		if(Noeud_get_pere(Q)==Arbre_finBloc(H,Q) && 
+			Noeud_est_frere(Arbre_get_feuilleSpeciale(H),Q) ){
+
+			Q = Noeud_get_pere(Q);
+		}
+	}
+	return Arbre_Traitement(H,Q);
+}
+
+
+
+unsigned char Noeud_code(const Noeud *N){
+	if(Noeud_get_filsDroit( Noeud_get_pere(N) ) == N)//Si c'est le fils droit
+		return '1';
+	else
+		return '0';
+}
+
+unsigned char * Arbre_code(const Arbre *H, Noeud *N){
+	Noeud *tmp;
+	tmp = N;
+	unsigned char *code, buff[50];
+	int i = 0;
+
+	while (tmp!=H->racine){
+		buff[i]=Noeud_code(tmp);
+		i++;
+	}
+	buff[i]='\0';
+	code = (unsigned char *)malloc(i*sizeof(unsigned char));
+	//On inverse le code
+	for(int j=0;j<i;j++){
+		code[j]=buff[i-1];
+		i--;
+	}
+	return code;
+}
