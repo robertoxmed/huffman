@@ -23,8 +23,10 @@ int main (){
 	H=Arbre_creerVide();
 	fprintf(stderr, "Arbre vide: %c %d\n", H->racine->caractere, H->racine->poids);
 	fprintf(stderr, "On test si c'est une feuille: %d\n", Noeud_estFeuille(H->racine));
-	Arbre_Modification(H,'a');
-	
+	H = Arbre_Modification(H,'a');
+	Arbre_affichage(H);
+	H = Arbre_Modification(H,'b');
+	Arbre_affichage(H);
 	fprintf(stderr, "On libère les structures allouées.\n");
 	Arbre_detruire(H);
 

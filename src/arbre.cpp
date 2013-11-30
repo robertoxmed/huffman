@@ -9,6 +9,8 @@
 
 #include "../include/arbre.hpp"
 
+using namespace std;
+
 Noeud* Noeud_creerVide(){
 	Noeud * retour;
 	retour = (Noeud*)malloc(sizeof(Noeud));
@@ -32,6 +34,9 @@ Arbre* Arbre_creerVide(){
 	H->racine = H->feuilleSpeciale;
 	H->feuilleSpeciale->caractere = '#';
 	H->feuilleSpeciale->poids = 0; /*La feuille spéciale a toujours un poids de 0*/
+	H->feuilleSpeciale->pere = H->feuilleSpeciale;
+
+	H->premiere_insertion = 1;
 
 	for(int i=0; i<256; i++){
 		H->caracteres[i] = 0;
@@ -150,11 +155,13 @@ void Noeud_set_allValues(Noeud *N, const unsigned char c, const unsigned int p){
 }
 
 int Noeud_recherche_char(Noeud *N, unsigned char c){
-	if(Noeud_get_char(N)==c)
-		return 1;
-	else{
-		Noeud_recherche_char(Noeud_get_filsDroit(N),c);
-		Noeud_recherche_char(Noeud_get_filsGauche(N),c);
+	if(N!=NULL){
+		if(Noeud_get_char(N)==c)
+			return 1;
+		else{
+			Noeud_recherche_char(Noeud_get_filsDroit(N),c);
+			Noeud_recherche_char(Noeud_get_filsGauche(N),c);
+		}
 	}
 	return 0;
 }
@@ -164,12 +171,63 @@ int Arbre_recherche_char(Arbre *H, unsigned char c){
 }
 
 Arbre* Arbre_Traitement(Arbre *H, Noeud *Q){
+	vector<Noeud*> Gamma_Q; //Le chemin à la racine
+	vector<int> Gamma_x;
+	Noeud *P = Q;
+	int echanger = 0;
+
+	if(P == H->racine){
+		Gamma_Q.push_back(P);
+		Gamma_x.push_back(Noeud_get_poids(P));
+	}else{
+		while(P != H->racine){
+			Gamma_Q.push_back(P);
+			Gamma_x.push_back(Noeud_get_poids(P));
+			P = Noeud_get_pere(P);
+		}
+	}
+	//Parcourir les valeurs de Gamma_Q, verifier P
+	if(Gamma_x.size()!=1)
+		for(int i=0;i<Gamma_x.size()-1;i++){
+			if(Gamma_x[i]!=Gamma_x[i+1])
+				echanger = 1;
+		}
+	
+	if(!echanger){ //Si P satisfaite on incrémente les poids
+		for(int i=0;i<Gamma_x.size();i++){
+			Gamma_Q[i]->poids++;
+		}	
+	}else{	//Sinon echanger apres avoir incrémenté les incrémentables
+
+	}
+	
+
 	return H;
 }
 
 Arbre* Arbre_Modification(Arbre *H, unsigned char c){
 	Noeud *Q;
-	if(!Arbre_recherche_char(H,c)){//Si le caractère n'est pas dans l'arbre
+	if(H->premiere_insertion){
+		//La première insertion est un peu spéciale
+		Noeud *N_interne = Noeud_creerVide();
+		N_interne->poids = 1;
+
+		Noeud *N = Noeud_creerVide();
+		Noeud_set_allValues(N,c,1);
+
+		//Dynamique des pointeurs
+		Noeud_set_allPointers(Arbre_get_feuilleSpeciale(H),NULL,NULL,N,NULL,N_interne);
+
+		Noeud_set_allPointers(N,NULL,NULL,Noeud_get_suivant(Arbre_get_feuilleSpeciale(H)),
+			Arbre_get_feuilleSpeciale(H),N_interne);
+
+		Noeud_set_allPointers(N_interne,Arbre_get_feuilleSpeciale(H),N,NULL,NULL,N_interne);
+		H->racine = N_interne;
+		H->premiere_insertion = 0;
+		H->GDBH = N;
+		return H;
+
+	}else if(!Arbre_recherche_char(H,c)){//Si le caractère n'est pas dans l'arbre
 		//Allocation des nouveaux noeuds et affectation des valeurs
 		Q = Noeud_get_pere(Arbre_get_feuilleSpeciale(H));
 		Noeud *N_interne = Noeud_creerVide();
@@ -185,6 +243,8 @@ Arbre* Arbre_Modification(Arbre *H, unsigned char c){
 		Noeud_set_allPointers(N_interne,Arbre_get_feuilleSpeciale(H),N,NULL,NULL,Q);
 		Q->filsGauche = N_interne;
 		H->GDBH = N;
+		return Arbre_Traitement(H,Q);
+
 	}else{//Si le caractère est dans l'arbre
 		Q = Arbre_get_feuille(H,c);
 		if(Noeud_get_pere(Q)==Arbre_finBloc(H,Q) && 
@@ -192,8 +252,8 @@ Arbre* Arbre_Modification(Arbre *H, unsigned char c){
 
 			Q = Noeud_get_pere(Q);
 		}
+		return Arbre_Traitement(H,Q);
 	}
-	return Arbre_Traitement(H,Q);
 }
 
 Noeud* Arbre_finBloc(const Arbre *H, Noeud *N){
@@ -235,15 +295,16 @@ unsigned char * Arbre_code(const Arbre *H, Noeud *N){
 
 void Noeud_affichage(const Noeud *N){
 	if(N!=NULL){
-		printf("( ");
-		printf("%c - %d\n", Noeud_get_char(N), Noeud_get_poids(N));
+		fprintf(stderr," { ");
+		fprintf(stderr,"[%c - %d]", Noeud_get_char(N), Noeud_get_poids(N));
 		Noeud_affichage(Noeud_get_filsGauche(N));
 		Noeud_affichage(Noeud_get_filsDroit(N));
-		printf(") ");
+		fprintf(stderr," } ");
 	}
 	
 }
 
 void Arbre_affichage(const Arbre *H){
 	Noeud_affichage(H->racine);
+	fprintf(stderr, "\n");
 }

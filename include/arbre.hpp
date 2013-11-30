@@ -12,6 +12,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <vector>
 
 typedef struct Noeud_t {
 	
@@ -35,6 +36,7 @@ struct Arbre_t
 	Noeud *racine;
 	Noeud *feuilleSpeciale;
 	Noeud *GDBH;
+	int premiere_insertion;
 
 	unsigned char caracteres[256];
 };
@@ -94,7 +96,7 @@ unsigned char * Arbre_code(const Arbre *H, Noeud *N);
 //Va echanger la possition des deux Noeuds
 void Noeud_echanger(Noeud *N, Noeud *M);
 
-
+//Retourne le premier Noeud qui n'a pas le même poids que N
 Noeud* Arbre_finBloc(const Arbre *H, Noeud *N);
 
 
