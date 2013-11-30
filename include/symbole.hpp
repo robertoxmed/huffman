@@ -11,6 +11,9 @@
 #ifndef __SYMBOLE_
 #define __SYMBOLE_
 
+typedef struct Symbole_t{
+	
+} Symbole;
 
 
 #endif

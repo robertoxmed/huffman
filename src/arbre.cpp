@@ -46,6 +46,13 @@ int Noeud_estFeuille(Noeud *N){
 	return 0;
 }
 
+int Noeud_est_frere(const Noeud *N, const Noeud *M){
+	Noeud * Q = Noeud_get_pere(N);
+	if(Noeud_get_filsGauche(Q) == M || Noeud_get_filsDroit(Q) == M)
+		return 1;
+	return 0;
+}
+
 void Noeud_detruire(Noeud *N){
 	if(N!=NULL && !Noeud_estFeuille(N)){
 		/*On libère que les fils et pas les voisins*/
@@ -106,6 +113,20 @@ unsigned int Noeud_get_poids(const Noeud *N){
 	return p;
 }
 
+Noeud * Noeud_get_feuille(Noeud *N, const unsigned char c){
+	if(N->caractere == c)
+		return N;
+	else{
+		Noeud_get_feuille(Noeud_get_filsDroit(N),c);
+		Noeud_get_feuille(Noeud_get_filsDroit(N),c);
+	}
+	return NULL;
+}
+
+Noeud* Arbre_get_feuille(Arbre *H, const unsigned char c){
+	return Noeud_get_feuille(H->racine,c);
+}
+
 void Noeud_set_allPointers(Noeud *N, Noeud *fg, Noeud *fd,
 	 Noeud *suivant, Noeud *precedant, Noeud * pere){
 	if( N!= NULL){
@@ -115,6 +136,10 @@ void Noeud_set_allPointers(Noeud *N, Noeud *fg, Noeud *fd,
 		N->precedant = precedant;
 		N->pere = pere;
 	}
+}
+
+Noeud* Arbre_get_feuilleSpeciale(Arbre *H){
+	return H->feuilleSpeciale;
 }
 
 void Noeud_set_allValues(Noeud *N, const unsigned char c, const unsigned int p){
@@ -128,28 +153,39 @@ int Noeud_recherche_char(Noeud *N, unsigned char c){
 	if(Noeud_get_char(N)==c)
 		return 1;
 	else{
-		Noeud_recherche_char(N->fd,c);
-		Noeud_recherche_char(N->fg,c);
+		Noeud_recherche_char(Noeud_get_filsDroit(N),c);
+		Noeud_recherche_char(Noeud_get_filsGauche(N),c);
 	}
 	return 0;
 }
 
 int Arbre_recherche_char(Arbre *H, unsigned char c){
-	return Noeud_recherche_char(H->racine);
+	return Noeud_recherche_char(H->racine,c);
 }
 
 Arbre* Arbre_Traitement(Arbre *H, Noeud *Q){
-
+	return H;
 }
 
 Arbre* Arbre_Modification(Arbre *H, unsigned char c){
 	Noeud *Q;
-	if(!Arbre_recherche_char(H,c)){
+	if(!Arbre_recherche_char(H,c)){//Si le caractère n'est pas dans l'arbre
+		//Allocation des nouveaux noeuds et affectation des valeurs
 		Q = Noeud_get_pere(Arbre_get_feuilleSpeciale(H));
+		Noeud *N_interne = Noeud_creerVide();
+		N_interne->poids = 1;
+
 		Noeud *N = Noeud_creerVide();
-		Noeud_set_allValues(c,1);
-		Noeud_set_allPointers();
-	}else{
+		Noeud_set_allValues(N,c,1);
+
+		//Dynamique des pointeurs
+		Noeud_set_allPointers(N,NULL,NULL,Noeud_get_suivant(Arbre_get_feuilleSpeciale(H)),
+			Arbre_get_feuilleSpeciale(H),N_interne);
+
+		Noeud_set_allPointers(N_interne,Arbre_get_feuilleSpeciale(H),N,NULL,NULL,Q);
+		Q->filsGauche = N_interne;
+		H->GDBH = N;
+	}else{//Si le caractère est dans l'arbre
 		Q = Arbre_get_feuille(H,c);
 		if(Noeud_get_pere(Q)==Arbre_finBloc(H,Q) && 
 			Noeud_est_frere(Arbre_get_feuilleSpeciale(H),Q) ){
@@ -158,6 +194,14 @@ Arbre* Arbre_Modification(Arbre *H, unsigned char c){
 		}
 	}
 	return Arbre_Traitement(H,Q);
+}
+
+Noeud* Arbre_finBloc(const Arbre *H, Noeud *N){
+	unsigned int poids = Noeud_get_poids(N);
+	Noeud *P = N;
+	while(poids == Noeud_get_poids(P))
+		P = P->suivant;
+	return P;
 }
 
 
@@ -187,4 +231,19 @@ unsigned char * Arbre_code(const Arbre *H, Noeud *N){
 		i--;
 	}
 	return code;
+}
+
+void Noeud_affichage(const Noeud *N){
+	if(N!=NULL){
+		printf("( ");
+		printf("%c - %d\n", Noeud_get_char(N), Noeud_get_poids(N));
+		Noeud_affichage(Noeud_get_filsGauche(N));
+		Noeud_affichage(Noeud_get_filsDroit(N));
+		printf(") ");
+	}
+	
+}
+
+void Arbre_affichage(const Arbre *H){
+	Noeud_affichage(H->racine);
 }

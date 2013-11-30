@@ -34,6 +34,7 @@ struct Arbre_t
 {
 	Noeud *racine;
 	Noeud *feuilleSpeciale;
+	Noeud *GDBH;
 
 	unsigned char caracteres[256];
 };
@@ -81,7 +82,7 @@ void Noeud_set_allValues(Noeud *N, unsigned char c, unsigned int p);
 
 /*Spécifique pour l'arbre de Huffman*/
 
-//Fonction de modification de l'arbre de Huffman
+//Fonction de modification de l'arbre de Huffman. On va rajouter le caractère c
 Arbre* Arbre_Modification(Arbre *H, unsigned char c);
 
 //Fonction de Traitement de l'arbre de Huffman
@@ -94,7 +95,7 @@ unsigned char * Arbre_code(const Arbre *H, Noeud *N);
 void Noeud_echanger(Noeud *N, Noeud *M);
 
 
-Noeud* Arbre_finBloc(const Arbre &H, const Noeud &N);
+Noeud* Arbre_finBloc(const Arbre *H, Noeud *N);
 
 
 //Affichage de l'arbre de Huffman
