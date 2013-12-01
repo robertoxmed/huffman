@@ -27,6 +27,9 @@ int main (){
 	Arbre_affichage(H);
 	H = Arbre_Modification(H,'b');
 	Arbre_affichage(H);
+	H = Arbre_Modification_MAJ(H,'r');
+	Arbre_affichage(H);
+
 	fprintf(stderr, "On libère les structures allouées.\n");
 	Arbre_detruire(H);
 

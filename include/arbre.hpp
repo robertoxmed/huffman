@@ -13,6 +13,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <vector>
+#include <algorithm> //Pour le quicksort
+
+/* --------------------------------------------
+  Définitions des structures de données
+ ----------------------------------------------*/ 
 
 typedef struct Noeud_t {
 	
@@ -24,26 +29,23 @@ typedef struct Noeud_t {
 	Noeud_t *filsDroit;
 	Noeud_t *filsGauche;
 
-	/*Ces pointeurs permettent de faire la vérification
-	  de la propiété P */
+	//Ce pointeurs permet vérifier la propiété P 
 	Noeud_t *suivant;
-	Noeud_t *precedant;
 
 } Noeud;
 
-struct Arbre_t
+typedef struct Arbre_t
 {
 	Noeud *racine;
 	Noeud *feuilleSpeciale;
-	Noeud *GDBH;
+	
 	int premiere_insertion;
 
-	unsigned char caracteres[256];
-};
+} Arbre;
 
-typedef struct Arbre_t Arbre;
-
-/*Fonctions pour la gestion de la mémoire*/
+/*----------------------------------------
+Fonctions pour la gestion de la mémoire
+-----------------------------------------*/
 
 //Initialise et alloue une structure dé noeud vide
 Noeud* Noeud_creerVide();
@@ -66,8 +68,6 @@ Noeud* Noeud_get_filsDroit(const Noeud *N);
 Noeud* Noeud_get_pere(const Noeud *N);
 //Renvoie un pointeur sur le suivant du Noeud
 Noeud* Noeud_get_suivant(const Noeud *N);
-//Renvoie un pointeur sur le précédant du Noeud
-Noeud* Noeud_get_precedant(const Noeud *N);
 //Renvoie le caractère du Noeud
 unsigned char Noeud_get_char(const Noeud *N);
 //Renvoie le poids du Noeud
@@ -77,7 +77,7 @@ unsigned int Noeud_get_poids(const Noeud *N);
 
 //Pour initialiser tous les pointeurs du Noeud N
 void Noeud_set_allPointers(Noeud *N, Noeud *fg, Noeud *fd,
-	 Noeud *suivant, Noeud *precedant, Noeud * pere);
+	 Noeud *suivant, Noeud * pere);
 //Pour initialiser les valeurs du Noeud N
 void Noeud_set_allValues(Noeud *N, unsigned char c, unsigned int p);
 
@@ -87,6 +87,8 @@ void Noeud_set_allValues(Noeud *N, unsigned char c, unsigned int p);
 //Fonction de modification de l'arbre de Huffman. On va rajouter le caractère c
 Arbre* Arbre_Modification(Arbre *H, unsigned char c);
 
+Arbre* Arbre_Modification_MAJ(Arbre *H, unsigned char c);
+
 //Fonction de Traitement de l'arbre de Huffman
 Arbre* Arbre_Traitement(Arbre *H, Noeud *Q);
 
@@ -94,11 +96,10 @@ Arbre* Arbre_Traitement(Arbre *H, Noeud *Q);
 unsigned char * Arbre_code(const Arbre *H, Noeud *N);
 
 //Va echanger la possition des deux Noeuds
-void Noeud_echanger(Noeud *N, Noeud *M);
+void Noeud_echanger(Arbre *H, Noeud *N, Noeud *M);
 
 //Retourne le premier Noeud qui n'a pas le même poids que N
 Noeud* Arbre_finBloc(const Arbre *H, Noeud *N);
-
 
 //Affichage de l'arbre de Huffman
 void Arbre_affichage(const Arbre *H);
