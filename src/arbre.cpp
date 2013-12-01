@@ -102,15 +102,25 @@ unsigned int Noeud_get_poids(const Noeud *N){
 	p=N->poids;
 	return p;
 }
+void Noeud_affichage(const Noeud *N){
+	fprintf(stderr,"[%c - %d]", Noeud_get_char(N), Noeud_get_poids(N));
+}
 
 Noeud * Noeud_get_feuille(Noeud *N, const unsigned char c){
-	if(N->caractere == c)
-		return N;
-	else{
-		Noeud_get_feuille(Noeud_get_filsDroit(N),c);
-		Noeud_get_feuille(Noeud_get_filsDroit(N),c);
+	Noeud *Q = NULL;
+	if(N!=NULL){
+		if(Noeud_estFeuille(N) && Noeud_get_char(N) == c){
+			Q = N;
+			return Q;
+		}else{
+			Q = Noeud_get_feuille(Noeud_get_filsGauche(N),c);
+			if(Q!=NULL)
+				return Q;
+			else
+				Q = Noeud_get_feuille(Noeud_get_filsDroit(N),c);
+		}
 	}
-	return NULL;
+	return Q;
 }
 
 Noeud* Arbre_get_feuille(Arbre *H, const unsigned char c){
@@ -143,8 +153,7 @@ int Noeud_recherche_char(Noeud *N, unsigned char c){
 		if(Noeud_get_char(N)==c)
 			return 1;
 		else{
-			Noeud_recherche_char(Noeud_get_filsDroit(N),c);
-			Noeud_recherche_char(Noeud_get_filsGauche(N),c);
+			return Noeud_recherche_char(Noeud_get_filsDroit(N),c) || Noeud_recherche_char(Noeud_get_filsGauche(N),c);
 		}
 	}
 	return 0;
@@ -155,11 +164,11 @@ int Arbre_recherche_char(Arbre *H, unsigned char c){
 }
 
 
-int compare (const void * a, const void * b){
-  return ( Noeud_get_poids((Noeud*)a) - Noeud_get_poids((Noeud*)b) );
+bool compare (const Noeud* a, const Noeud* b){
+  return ( Noeud_get_poids(a)<=Noeud_get_poids(b) );
 }
 
-void Noeud_recup_Noeuds(Noeud *N, vector<Noeud*> v){
+void Noeud_recup_Noeuds(Noeud *N, vector<Noeud*> &v){
 	if(N!=NULL){
 		v.push_back(N);
 		Noeud_recup_Noeuds(Noeud_get_filsGauche(N),v);
@@ -169,20 +178,16 @@ void Noeud_recup_Noeuds(Noeud *N, vector<Noeud*> v){
 
 void Arbre_maj_pointeurSuivant(Arbre *H){
 	//Stocker les feuilles dans un vecteur
-	vector<Noeud*> v_feuilles;
+	vector<Noeud*> v_noeuds;
 
-	Noeud_recup_Noeuds(H->racine,v_feuilles);
+	Noeud_recup_Noeuds(H->racine,v_noeuds);
 	//Tri des feuilles
-	sort(v_feuilles.begin(),v_feuilles.end(),compare);
-
+	sort(v_noeuds.begin(),v_noeuds.end(),compare);
 	//MAJ du pointeur suivant
-	for(int i=0;i<v_feuilles.size()-1;i++){
-		fprintf(stderr, "Noeud: %c - %d \n", v_feuilles[i]->caractere, v_feuilles[i]->poids);
-		Noeud_set_allPointers(v_feuilles[i],Noeud_get_filsGauche(v_feuilles[i]),Noeud_get_filsDroit(v_feuilles[i]),
-			v_feuilles[i+1],Noeud_get_pere(v_feuilles[i]));
+	for(int i=0;i<v_noeuds.size()-1;i++){
+		v_noeuds[i]->suivant = v_noeuds[i+1];
 	}
-	Noeud_set_allPointers(v_feuilles[v_feuilles.size()],Noeud_get_filsGauche(v_feuilles[v_feuilles.size()]),Noeud_get_filsDroit(v_feuilles[v_feuilles.size()]),
-			NULL,Noeud_get_pere(v_feuilles[v_feuilles.size()]));
+	v_noeuds[v_noeuds.size()-1]->suivant = NULL;
 }
 
 //Change la structure de l'arbre => va falloir mettre à jour les pointeurs sur suivant
@@ -370,18 +375,20 @@ unsigned char * Arbre_code(const Arbre *H, Noeud *N){
 	return code;
 }
 
-void Noeud_affichage(const Noeud *N){
+
+
+void Noeud_affichage_recursif(const Noeud *N){
 	if(N!=NULL){
 		fprintf(stderr," { ");
 		fprintf(stderr,"[%c - %d]", Noeud_get_char(N), Noeud_get_poids(N));
-		Noeud_affichage(Noeud_get_filsGauche(N));
-		Noeud_affichage(Noeud_get_filsDroit(N));
+		Noeud_affichage_recursif(Noeud_get_filsGauche(N));
+		Noeud_affichage_recursif(Noeud_get_filsDroit(N));
 		fprintf(stderr," } ");
 	}
 	
 }
 
 void Arbre_affichage(const Arbre *H){
-	Noeud_affichage(H->racine);
+	Noeud_affichage_recursif(H->racine);
 	fprintf(stderr, "\n");
 }
