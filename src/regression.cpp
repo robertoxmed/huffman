@@ -34,8 +34,15 @@ int main (){
 	H = Arbre_Modification_MAJ(H,'c');
 	H = Arbre_Modification_MAJ(H,'a');
 	Arbre_affichage(H);
-
-
+	H = Arbre_Modification_MAJ(H,'d');
+	Arbre_affichage(H);
+	H = Arbre_Modification_MAJ(H,'a');
+	Arbre_affichage(H);
+	H = Arbre_Modification_MAJ(H,'b');//Problème iciii
+	Arbre_affichage(H);
+	H = Arbre_Modification_MAJ(H,'r');
+	H = Arbre_Modification_MAJ(H,'a');
+	Arbre_affichage(H);
 
 	fprintf(stderr, "On libère les structures allouées.\n");
 	Arbre_detruire(H);

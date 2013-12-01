@@ -17,6 +17,7 @@ Noeud* Noeud_creerVide(){
 
 	/*On initialise la structure*/
 	retour->poids = 0;
+	retour->profondeur = 0;
 	retour->caractere = ' ';
 	retour->pere = NULL;
 	retour->filsDroit = NULL;
@@ -102,6 +103,11 @@ unsigned int Noeud_get_poids(const Noeud *N){
 	p=N->poids;
 	return p;
 }
+unsigned int Noeud_get_profondeur(const Noeud *N){
+	unsigned int p;
+	p=N->profondeur;
+	return p;
+}
 void Noeud_affichage(const Noeud *N){
 	fprintf(stderr,"[%c - %d]", Noeud_get_char(N), Noeud_get_poids(N));
 }
@@ -141,10 +147,11 @@ Noeud* Arbre_get_feuilleSpeciale(Arbre *H){
 	return H->feuilleSpeciale;
 }
 
-void Noeud_set_allValues(Noeud *N, const unsigned char c, const unsigned int p){
+void Noeud_set_allValues(Noeud *N, const unsigned char c, const unsigned int p, const unsigned int prof){
 	if( N != NULL ){
 		N->caractere = c;
 		N->poids = p;
+		N->profondeur = prof;
 	}
 }
 
@@ -164,9 +171,6 @@ int Arbre_recherche_char(Arbre *H, unsigned char c){
 }
 
 
-bool compare (const Noeud* a, const Noeud* b){
-  return ( Noeud_get_poids(a)<=Noeud_get_poids(b) );
-}
 
 void Noeud_recup_Noeuds(Noeud *N, vector<Noeud*> &v){
 	if(N!=NULL){
@@ -176,6 +180,15 @@ void Noeud_recup_Noeuds(Noeud *N, vector<Noeud*> &v){
 	}
 }
 
+
+bool compare_prof (const Noeud* a, const Noeud* b){
+  return ( Noeud_get_profondeur(a)>Noeud_get_profondeur(b) );
+}
+
+bool compare (const Noeud* a, const Noeud* b){
+  return ( Noeud_get_poids(a)<=Noeud_get_poids(b) );
+}
+
 void Arbre_maj_pointeurSuivant(Arbre *H){
 	//Stocker les feuilles dans un vecteur
 	vector<Noeud*> v_noeuds;
@@ -183,15 +196,18 @@ void Arbre_maj_pointeurSuivant(Arbre *H){
 	Noeud_recup_Noeuds(H->racine,v_noeuds);
 	//Tri des feuilles
 	sort(v_noeuds.begin(),v_noeuds.end(),compare);
+	sort(v_noeuds.begin(), v_noeuds.end(),compare_prof);
+
 	//MAJ du pointeur suivant
 	for(int i=0;i<v_noeuds.size()-1;i++){
 		v_noeuds[i]->suivant = v_noeuds[i+1];
 	}
+
 	v_noeuds[v_noeuds.size()-1]->suivant = NULL;
 }
 
 //Change la structure de l'arbre => va falloir mettre à jour les pointeurs sur suivant
-void Noeud_echanger(Arbre *H, Noeud *N,Noeud* M){ 
+void Noeud_echanger(Arbre *H, Noeud *N, Noeud* M){ 
 	Noeud *Q = Noeud_get_pere(N);
 	Noeud *P = Noeud_get_pere(M);
 
@@ -277,9 +293,10 @@ Arbre* Arbre_Modification(Arbre *H, unsigned char c){
 		//La première insertion est un peu spéciale
 		Noeud *N_interne = Noeud_creerVide();
 		N_interne->poids = 1;
+		N_interne->profondeur = 0;
 
 		Noeud *N = Noeud_creerVide();
-		Noeud_set_allValues(N,c,1);
+		Noeud_set_allValues(N,c,1,1);
 
 		//Dynamique des pointeurs
 		Noeud_set_allPointers(Arbre_get_feuilleSpeciale(H),NULL,NULL,
@@ -290,8 +307,11 @@ Arbre* Arbre_Modification(Arbre *H, unsigned char c){
 
 		Noeud_set_allPointers(N_interne,Arbre_get_feuilleSpeciale(H),N,
 			NULL,N_interne);
+
 		H->racine = N_interne;
 		H->premiere_insertion = 0;
+		Noeud *FS = Arbre_get_feuilleSpeciale(H);
+		FS->profondeur = 1;
 		return H;
 
 	}else if(!Arbre_recherche_char(H,c)){//Si le caractère n'est pas dans l'arbre
@@ -299,9 +319,10 @@ Arbre* Arbre_Modification(Arbre *H, unsigned char c){
 		Q = Noeud_get_pere(Arbre_get_feuilleSpeciale(H));
 		Noeud *N_interne = Noeud_creerVide();
 		N_interne->poids = 1;
+		N_interne->profondeur = Noeud_get_profondeur(Q)+1;
 
 		Noeud *N = Noeud_creerVide();
-		Noeud_set_allValues(N,c,1);
+		Noeud_set_allValues(N,c,1, Noeud_get_profondeur(Q)+2);
 
 		//Dynamique des pointeurs
 		Q->filsGauche = N_interne;
@@ -313,7 +334,8 @@ Arbre* Arbre_Modification(Arbre *H, unsigned char c){
 
 		Noeud_set_allPointers(Arbre_get_feuilleSpeciale(H),NULL,NULL,
 			N,N_interne);
-
+		Noeud *FS = Arbre_get_feuilleSpeciale(H);
+		FS->profondeur++;
 		return Arbre_Traitement(H,Q);
 
 	}else{//Si le caractère est dans l'arbre
@@ -327,8 +349,25 @@ Arbre* Arbre_Modification(Arbre *H, unsigned char c){
 	}
 }
 
+void Noeud_maj_profondeurs(Noeud *N, int prof){
+	if(N!=NULL){
+		if(Noeud_estFeuille(N))
+			N->profondeur = prof;
+		else{
+			N->profondeur = prof;
+			Noeud_maj_profondeurs(Noeud_get_filsGauche(N),prof+1);
+			Noeud_maj_profondeurs(Noeud_get_filsDroit(N),prof+1);
+		}
+	}
+}
+
+void Arbre_maj_profondeurs(Arbre *H){
+	Noeud_maj_profondeurs(H->racine, 0);
+}
+
 Arbre * Arbre_Modification_MAJ(Arbre *H, unsigned char c){
 	H = Arbre_Modification(H,c);
+	Arbre_maj_profondeurs(H);
 	Arbre_maj_pointeurSuivant(H);
 	return H;
 }
@@ -374,8 +413,6 @@ unsigned char * Arbre_code(const Arbre *H, Noeud *N){
 	}
 	return code;
 }
-
-
 
 void Noeud_affichage_recursif(const Noeud *N){
 	if(N!=NULL){

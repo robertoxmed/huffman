@@ -29,8 +29,9 @@ typedef struct Noeud_t {
 	Noeud_t *filsDroit;
 	Noeud_t *filsGauche;
 
-	//Ce pointeurs permet vérifier la propiété P 
+	//Ce pointeur et entier permettent vérifier la propiété GDBH
 	Noeud_t *suivant;
+	unsigned int profondeur;
 
 } Noeud;
 
@@ -72,6 +73,8 @@ Noeud* Noeud_get_suivant(const Noeud *N);
 unsigned char Noeud_get_char(const Noeud *N);
 //Renvoie le poids du Noeud
 unsigned int Noeud_get_poids(const Noeud *N);
+//Renvoie la profondeur d'un Noeud dans l'arbre
+unsigned int Noeud_get_profondeur(const Noeud *N);
 
 /*Liste de mutateurs des éléments du Noeuds*/
 
@@ -79,7 +82,7 @@ unsigned int Noeud_get_poids(const Noeud *N);
 void Noeud_set_allPointers(Noeud *N, Noeud *fg, Noeud *fd,
 	 Noeud *suivant, Noeud * pere);
 //Pour initialiser les valeurs du Noeud N
-void Noeud_set_allValues(Noeud *N, unsigned char c, unsigned int p);
+void Noeud_set_allValues(Noeud *N, unsigned char c, unsigned int p, unsigned int prof);
 
 
 /*Spécifique pour l'arbre de Huffman*/
