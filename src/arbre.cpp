@@ -177,6 +177,7 @@ void Arbre_maj_pointeurSuivant(Arbre *H){
 
 	//MAJ du pointeur suivant
 	for(int i=0;i<v_feuilles.size()-1;i++){
+		fprintf(stderr, "Noeud: %c - %d \n", v_feuilles[i]->caractere, v_feuilles[i]->poids);
 		Noeud_set_allPointers(v_feuilles[i],Noeud_get_filsGauche(v_feuilles[i]),Noeud_get_filsDroit(v_feuilles[i]),
 			v_feuilles[i+1],Noeud_get_pere(v_feuilles[i]));
 	}
