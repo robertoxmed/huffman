@@ -27,9 +27,9 @@ int main (){
 	Arbre_affichage(H);
 	H = Arbre_Modification(H,'b');
 	Arbre_affichage(H);
-	H = Arbre_Modification_MAJ(H,'r');
+	H = Arbre_Modification(H,'r');
 	Arbre_affichage(H);
-	H = Arbre_Modification_MAJ(H,'a');
+	H = Arbre_Modification(H,'a');
 	Arbre_affichage(H);
 	H = Arbre_Modification_MAJ(H,'c');
 	H = Arbre_Modification_MAJ(H,'a');

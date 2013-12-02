@@ -196,7 +196,7 @@ void Arbre_maj_pointeurSuivant(Arbre *H){
 	Noeud_recup_Noeuds(H->racine,v_noeuds);
 	//Tri des feuilles
 	sort(v_noeuds.begin(),v_noeuds.end(),compare);
-	sort(v_noeuds.begin(), v_noeuds.end(),compare_prof);
+	//sort(v_noeuds.begin(), v_noeuds.end(),compare_prof);
 
 	//MAJ du pointeur suivant
 	for(int i=0;i<v_noeuds.size()-1;i++){
@@ -210,30 +210,26 @@ void Arbre_maj_pointeurSuivant(Arbre *H){
 void Noeud_echanger(Arbre *H, Noeud *N, Noeud* M){ 
 	Noeud *Q = Noeud_get_pere(N);
 	Noeud *P = Noeud_get_pere(M);
+	Noeud *suivantTmp;
+
+	suivantTmp = N->suivant;
+	M->suivant = suivantTmp;
+	N->suivant = M;
 
 	if(Noeud_get_filsGauche(Q) == N){
-
-		Noeud_set_allPointers(Q,M,Noeud_get_filsDroit(Q),
-			Noeud_get_suivant(Q),Noeud_get_pere(Q));
+		Q->filsGauche = M;
 
 		if(Noeud_get_filsGauche(P) == M){
-			Noeud_set_allPointers(P,N,Noeud_get_filsDroit(Q),
-				Noeud_get_suivant(Q),Noeud_get_pere(Q));
-
+			P->filsGauche = N;
 		}else{
-			Noeud_set_allPointers(P,Noeud_get_filsGauche(Q),N,
-				Noeud_get_suivant(Q),Noeud_get_pere(Q));
+			P->filsDroit = N;
 		}
 	}else{
-		Noeud_set_allPointers(Q,Noeud_get_filsGauche(Q),M
-			,Noeud_get_suivant(Q),Noeud_get_pere(Q));
-
+		Q->filsDroit = M;
 		if(Noeud_get_filsGauche(P) == M){
-			Noeud_set_allPointers(P,N,Noeud_get_filsDroit(Q),
-				Noeud_get_suivant(Q),Noeud_get_pere(Q));
+			P->filsGauche = N;
 		}else{
-			Noeud_set_allPointers(P,Noeud_get_filsGauche(Q),N,
-				Noeud_get_suivant(Q),Noeud_get_pere(Q));
+			P->filsDroit = N;
 		}
 	}
 }
@@ -280,8 +276,8 @@ Arbre* Arbre_Traitement(Arbre *H, Noeud *Q){
 		for(int i=0;i<indice;i++){
 			Gamma_Q[i]->poids++;
 		}
-		Noeud_echanger(H,b,m);
 		m->poids++;
+		Noeud_echanger(H,b,m);
 		return(Arbre_Traitement(H,Noeud_get_pere(m)));
 	}
 	return H;
@@ -306,9 +302,10 @@ Arbre* Arbre_Modification(Arbre *H, unsigned char c){
 			N_interne,N_interne);
 
 		Noeud_set_allPointers(N_interne,Arbre_get_feuilleSpeciale(H),N,
-			NULL,N_interne);
+			NULL,NULL);
 
 		H->racine = N_interne;
+		H->racine->suivant = NULL;
 		H->premiere_insertion = 0;
 		Noeud *FS = Arbre_get_feuilleSpeciale(H);
 		FS->profondeur = 1;
@@ -367,8 +364,8 @@ void Arbre_maj_profondeurs(Arbre *H){
 
 Arbre * Arbre_Modification_MAJ(Arbre *H, unsigned char c){
 	H = Arbre_Modification(H,c);
-	Arbre_maj_profondeurs(H);
-	Arbre_maj_pointeurSuivant(H);
+	//Arbre_maj_profondeurs(H);
+	//Arbre_maj_pointeurSuivant(H);
 	return H;
 }
 
@@ -376,13 +373,13 @@ Noeud* Arbre_finBloc(const Arbre *H, Noeud *N){
 	unsigned int poids = Noeud_get_poids(N);
 	Noeud *P = N->suivant;
 	Noeud *Q;
-	if(Noeud_get_poids(P)>poids)
+	if(Noeud_get_poids(P)>poids){
 		return N;
-	
+	}
 	while(poids == Noeud_get_poids(P) && P->suivant!=NULL){
+		//Noeud_affichage(P);
 		Q = P;
 		P = P->suivant;
-
 	}
 	return Q;
 }
