@@ -17,7 +17,7 @@
 #include <algorithm> //Pour le quicksort
 
 /* --------------------------------------------
-  Définitions des structures de données
+	Définitions des structures de données
  ----------------------------------------------*/ 
 
 typedef struct Noeud_t {
@@ -45,7 +45,7 @@ typedef struct Arbre_t
 } Arbre;
 
 /*----------------------------------------
-Fonctions pour la gestion de la mémoire
+	Fonctions pour la gestion de la mémoire
 -----------------------------------------*/
 
 //Initialise et alloue une structure dé noeud vide
@@ -59,7 +59,9 @@ void Arbre_detruire(Arbre *H);
 //Renvoie vrai si le noeud est une feuille
 int Noeud_estFeuille(Noeud *N);
 
-/*Liste d'accesseurs aux éléments du Noeuds*/
+/*-----------------------------------------
+	Liste d'accesseurs aux éléments du Noeuds
+------------------------------------------*/
 
 //Renvoie un pointeur sur le fils gauche du Noeud passé en argument
 Noeud* Noeud_get_filsGauche(const Noeud *N);
@@ -74,7 +76,9 @@ unsigned char Noeud_get_char(const Noeud *N);
 //Renvoie le poids du Noeud
 unsigned int Noeud_get_poids(const Noeud *N);
 
-/*Liste de mutateurs des éléments du Noeuds*/
+/*------------------------------------------
+	Liste de mutateurs des éléments du Noeuds
+-------------------------------------------*/
 
 //Pour initialiser tous les pointeurs du Noeud N
 void Noeud_set_allPointers(Noeud *N, Noeud *fg, Noeud *fd,
@@ -83,18 +87,21 @@ void Noeud_set_allPointers(Noeud *N, Noeud *fg, Noeud *fd,
 void Noeud_set_allValues(Noeud *N, unsigned char c, unsigned int p);
 
 
-/*Spécifique pour l'arbre de Huffman*/
+/*-----------------------------------------
+	Spécifique pour l'arbre de Huffman
+------------------------------------------*/
 
 //Fonction de modification de l'arbre de Huffman. On va rajouter le caractère c
 Arbre* Arbre_Modification(Arbre *H, unsigned char c);
-
-Arbre* Arbre_Modification_MAJ(Arbre *H, unsigned char c);
 
 //Fonction de Traitement de l'arbre de Huffman
 Arbre* Arbre_Traitement(Arbre *H, Noeud *Q);
 
 //Retourne le code correspondant au caractère c
 char * Arbre_code(Arbre *H, unsigned char c);
+
+//Retourne le code correspondant à la feuille spéciale
+char * Arbre_code_FS(Arbre *H);
 
 //Va echanger la possition des deux Noeuds
 void Noeud_echanger(Arbre *H, Noeud *N, Noeud *M);
@@ -104,5 +111,8 @@ Noeud* Arbre_finBloc(const Arbre *H, Noeud *N);
 
 //Affichage de l'arbre de Huffman
 void Arbre_affichage(const Arbre *H);
+
+int Arbre_recherche_char(Arbre *H, unsigned char c);
+
 
 #endif

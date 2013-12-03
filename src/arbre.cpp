@@ -2,9 +2,9 @@
  * Algav: Projet Arbre Huffman Adaptative
  * arbre.cpp: définit les fonctions de gestion de l'arbre
  *
- * @author Roberto Medina
+ * Roberto MEDINA
  * 
- * @date 2013/12/10
+ * 10 Décembre 2013
 */
 
 #include "../include/arbre.hpp"
@@ -17,7 +17,7 @@ Noeud* Noeud_creerVide(){
 
 	/*On initialise la structure*/
 	retour->poids = 0;
-	retour->caractere = ' ';
+	retour->caractere = '_';
 	retour->pere = NULL;
 	retour->filsDroit = NULL;
 	retour->filsGauche = NULL;
@@ -350,6 +350,11 @@ char * Arbre_code(const Arbre *H, Noeud *N){
 	}
 	code[strlen(buff)]='\0';
 	return code;
+}
+
+char * Arbre_code_FS(Arbre *H){
+	char *retour = Arbre_code(H,Arbre_get_feuilleSpeciale(H));
+	return retour;
 }
 
 char * Arbre_code(Arbre *H, unsigned char c){
