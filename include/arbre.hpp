@@ -12,6 +12,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <vector>
 #include <algorithm> //Pour le quicksort
 
@@ -31,7 +32,6 @@ typedef struct Noeud_t {
 
 	//Ce pointeur et entier permettent vérifier la propiété GDBH
 	Noeud_t *suivant;
-	unsigned int profondeur;
 
 } Noeud;
 
@@ -73,8 +73,6 @@ Noeud* Noeud_get_suivant(const Noeud *N);
 unsigned char Noeud_get_char(const Noeud *N);
 //Renvoie le poids du Noeud
 unsigned int Noeud_get_poids(const Noeud *N);
-//Renvoie la profondeur d'un Noeud dans l'arbre
-unsigned int Noeud_get_profondeur(const Noeud *N);
 
 /*Liste de mutateurs des éléments du Noeuds*/
 
@@ -82,7 +80,7 @@ unsigned int Noeud_get_profondeur(const Noeud *N);
 void Noeud_set_allPointers(Noeud *N, Noeud *fg, Noeud *fd,
 	 Noeud *suivant, Noeud * pere);
 //Pour initialiser les valeurs du Noeud N
-void Noeud_set_allValues(Noeud *N, unsigned char c, unsigned int p, unsigned int prof);
+void Noeud_set_allValues(Noeud *N, unsigned char c, unsigned int p);
 
 
 /*Spécifique pour l'arbre de Huffman*/
@@ -95,8 +93,8 @@ Arbre* Arbre_Modification_MAJ(Arbre *H, unsigned char c);
 //Fonction de Traitement de l'arbre de Huffman
 Arbre* Arbre_Traitement(Arbre *H, Noeud *Q);
 
-//Retourne le code correspondant au Noeud N
-unsigned char * Arbre_code(const Arbre *H, Noeud *N);
+//Retourne le code correspondant au caractère c
+char * Arbre_code(Arbre *H, unsigned char c);
 
 //Va echanger la possition des deux Noeuds
 void Noeud_echanger(Arbre *H, Noeud *N, Noeud *M);

@@ -22,3 +22,12 @@ obj/arbre.o: src/arbre.cpp
 
 obj/symbole.o: src/symbole.cpp
 	$(CC) -o obj/symbole.o -c src/symbole.cpp $(CFLAGS)
+
+clean:
+	rm -rf obj/*.o vgcore* bin/*
+
+tar:
+	tar -cvf - ../$(TAR) | gzip >../$(TAR).tgz
+
+package: clean tar
+	

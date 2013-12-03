@@ -31,20 +31,25 @@ int main (){
 	Arbre_affichage(H);
 	H = Arbre_Modification(H,'a');
 	Arbre_affichage(H);
-	H = Arbre_Modification_MAJ(H,'c');
-	H = Arbre_Modification_MAJ(H,'a');
+	H = Arbre_Modification(H,'c');
+	H = Arbre_Modification(H,'a');
 	Arbre_affichage(H);
-	H = Arbre_Modification_MAJ(H,'d');
+	H = Arbre_Modification(H,'d');
 	Arbre_affichage(H);
-	H = Arbre_Modification_MAJ(H,'a');
+	H = Arbre_Modification(H,'a');
 	Arbre_affichage(H);
-	H = Arbre_Modification_MAJ(H,'b');//Problème iciii
+	H = Arbre_Modification(H,'b');
 	Arbre_affichage(H);
-	H = Arbre_Modification_MAJ(H,'r');
-	H = Arbre_Modification_MAJ(H,'a');
+	H = Arbre_Modification(H,'r');
+	H = Arbre_Modification(H,'a');
 	Arbre_affichage(H);
 
+
+	fprintf(stderr, "Le code de a : %s\n", Arbre_code(H,'a'));
+	fprintf(stderr, "Le code de b : %s\n", Arbre_code(H,'b'));
+	fprintf(stderr, "Le code de d : %s\n", Arbre_code(H,'d'));
 	fprintf(stderr, "On libère les structures allouées.\n");
+
 	Arbre_detruire(H);
 
 

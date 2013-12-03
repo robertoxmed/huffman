@@ -1,0 +1,60 @@
+=============================================
+Devoir de programmation: Huffman Dynamique
+=============================================
+
+=============================================
+Roberto MEDINA
+3360906
+=============================================
+----------------------------------------------
+Fichiers inclus
+----------------------------------------------
+
+src:
+	arbre.cpp:
+
+	regression.cpp:
+
+	compression.cpp:
+
+	symbole.cpp:
+
+	main.cpp:
+
+obj: - Aucun fichier.
+	make va mettre les *.o dans ce dossier
+
+include:
+	arbre.hpp:
+
+	compression.hpp:
+
+	symbole.hpp:
+
+bin: - Aucun fichier
+	make va mettre les éxécutables dans ce dossier
+
+demo:
+	Contient quelques fichiers de test pour le programme
+
+doc:
+	Quelques éléments de documentation du projet
+
+-----------------------------------------------
+Directives du Makefile
+-----------------------------------------------
+
+all: Crée l'éxécutable pour le main et le test de regression
+
+huffman-dynamique:
+
+huffman-regression:
+
+
+tar: Crée le tar avec le bon nommage et le comprime utilisant gzip
+
+clean: Nettoie les *.o et les éxécutables
+
+package: Fait un clean puis une tarball
+
+===============================================
