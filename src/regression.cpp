@@ -19,6 +19,9 @@ int main (){
 	fprintf(stderr, "=  Tests de regression Huffman Dynamique  =\n");
 	fprintf(stderr, "===========================================\n\n");
 
+	fprintf(stderr, "\n-------------------------------------------\n");
+	fprintf(stderr, "=            Tests sur les arbres           =\n");
+	fprintf(stderr, "----------------------------------------------\n\n");
 	//Création d'un arbre vide et on l'affiche
 	H=Arbre_creerVide();
 	fprintf(stderr, "Arbre vide: %c %d\n", H->racine->caractere, H->racine->poids);
@@ -48,8 +51,37 @@ int main (){
 	fprintf(stderr, "Le code de a : %s\n", Arbre_code(H,'a'));
 	fprintf(stderr, "Le code de b : %s\n", Arbre_code(H,'b'));
 	fprintf(stderr, "Le code de d : %s\n", Arbre_code(H,'d'));
-	fprintf(stderr, "On libère les structures allouées.\n");
 
+	fprintf(stderr, "\n-------------------------------------------\n");
+	fprintf(stderr, "-            Tests sur les symboles         -\n");
+	fprintf(stderr, "---------------------------------------------\n\n");
+
+	fprintf(stderr, "Affichage des Symboles:\n\n");
+
+	Symbole *s = Symbole_init();
+	Symbole_code_char(s,'b');
+	Symbole_printBinaire(s);
+	fprintf(stderr, "Dans le symbole: %c - %d\n", s->code, s->taille);
+
+	char * code = Arbre_code(H,'d');
+	Symbole_code(s,code,strlen(code));
+	Symbole_printBinaire(s);
+	fprintf(stderr, "Dans le symbole: %c - %d\n", s->code, s->taille);
+
+
+	fprintf(stderr, "Est-ce que j'ai un 1 à la position 0: %d\n", Symbole_code_position(s->code,0));
+
+	fprintf(stderr, "\nAffichage du Code buffer:\n\n");
+
+
+	Code_buffer *cbf = Code_buffer_init();
+	Code_buffer_ecrireSymbole(cbf,s);
+
+	Code_buffer_printBinaire(cbf);
+
+
+	fprintf(stderr, "On libère les structures allouées.\n");
+	Symbole_detruire(s);
 	Arbre_detruire(H);
 
 
