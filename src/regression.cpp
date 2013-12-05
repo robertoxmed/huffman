@@ -9,7 +9,7 @@
 
 #include "../include/arbre.hpp"
 #include "../include/symbole.hpp"
-
+#include "../include/compression.hpp"
 
 int main (){
 
@@ -19,8 +19,8 @@ int main (){
 	fprintf(stderr, "=  Tests de regression Huffman Dynamique  =\n");
 	fprintf(stderr, "===========================================\n\n");
 
-	fprintf(stderr, "\n-------------------------------------------\n");
-	fprintf(stderr, "=            Tests sur les arbres           =\n");
+	fprintf(stderr, "\n---------------------------------------------\n");
+	fprintf(stderr, "-            Tests sur les arbres           -\n");
 	fprintf(stderr, "----------------------------------------------\n\n");
 	//Création d'un arbre vide et on l'affiche
 	H=Arbre_creerVide();
@@ -52,7 +52,7 @@ int main (){
 	fprintf(stderr, "Le code de b : %s\n", Arbre_code(H,'b'));
 	fprintf(stderr, "Le code de d : %s\n", Arbre_code(H,'d'));
 
-	fprintf(stderr, "\n-------------------------------------------\n");
+	fprintf(stderr, "\n---------------------------------------------\n");
 	fprintf(stderr, "-            Tests sur les symboles         -\n");
 	fprintf(stderr, "---------------------------------------------\n\n");
 
@@ -74,19 +74,24 @@ int main (){
 
 	fprintf(stderr, "Est-ce que j'ai un 1 à la position 4: %d\n", Symbole_code_position(s_d->code,1));
 
-	fprintf(stderr, "\nAffichage du Code buffer:\n\n");
+	fprintf(stderr, "\nAffichage du Code buffer:\n");
 
 
 	Code_buffer *cbf = Code_buffer_init();
 	
 	Code_buffer_transmettre(cbf,s_b);
 	Code_buffer_transmettre(cbf,s_d);
-
-
 	Code_buffer_printBinaire(cbf);
 
+	int fd_entree = open("test", O_RDONLY);
+	int fd_sortie = open("test.huffman", O_WRONLY|O_CREAT|O_TRUNC, 0600);
 
-	fprintf(stderr, "On libère les structures allouées.\n");
+	fprintf(stderr, "\nOn va compresser le fichier \"test\" contenant abracadabra\n");
+
+	Compression(fd_entree,fd_sortie);
+
+
+	fprintf(stderr, "\nOn libère les structures allouées.\n");
 	Symbole_detruire(s_b);
 	Symbole_detruire(s_d);
 	Arbre_detruire(H);

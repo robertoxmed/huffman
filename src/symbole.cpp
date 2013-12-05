@@ -95,7 +95,6 @@ void Code_buffer_transmettre(Code_buffer *cbf, Symbole *s){
 
 		//Ecrire sur ce qui reste de l'octet
 		for(int i=cbf->nb_bits;i>=0;i--){ //Boucle pour savoir où écrire le bit du caractère courant
-			fprintf(stderr, "i = %d\n", i);
 			if(Symbole_code_position(s->code,cpt)) //Si le bit de la position cpt est à 1
 				cbf->code_buffer[cbf->octet_courant] |= (1 << (7-i));
 			else
@@ -108,7 +107,6 @@ void Code_buffer_transmettre(Code_buffer *cbf, Symbole *s){
 
 			//On écrit sur le nouveau octet
 		for(int i=7;i>=diff;i--){
-			fprintf(stderr, "i = %d\n", i);
 			if(Symbole_code_position(s->code,cpt)){//Si le bit de la position cpt est à 1
 				cbf->code_buffer[cbf->octet_courant] |= (1 << (7-i));
 				cbf->nb_bits--;
