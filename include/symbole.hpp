@@ -44,7 +44,7 @@ void Symbole_printBinaire(const Symbole *s);
 int Symbole_code_position(const char c, const int position);
 
 //On écrit un symbole sur le buffer
-void Code_buffer_ecrireSymbole(Code_buffer *cbf, Symbole *s);
+void Code_buffer_transmettre(Code_buffer *cbf, Symbole *s);
 
 //On écrit sur le fichier le code final obtenu
 void Code_buffer_fichier(Code_buffer * cbf, int * fd_out);
