@@ -14,7 +14,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <vector>
-#include <algorithm> //Pour le quicksort
 
 /* --------------------------------------------
 	Définitions des structures de données
@@ -23,7 +22,7 @@
 typedef struct Noeud_t {
 	
 	unsigned int poids;
-	unsigned char caractere;
+	unsigned char caractere; //Je devrais mettre un symbole generique
 
 	Noeud_t *pere;
 

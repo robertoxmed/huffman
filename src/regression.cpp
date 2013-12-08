@@ -8,7 +8,7 @@
  */
 
 #include "../include/arbre.hpp"
-#include "../include/symbole.hpp"
+#include "../include/codage.hpp"
 #include "../include/compression.hpp"
 
 int main (){
@@ -47,7 +47,6 @@ int main (){
 	H = Arbre_Modification(H,'a');
 	Arbre_affichage(H);
 
-
 	fprintf(stderr, "\nLe code de a : %s\n", Arbre_code(H,'a'));
 	fprintf(stderr, "Le code de b : %s\n", Arbre_code(H,'b'));
 	fprintf(stderr, "Le code de d : %s\n", Arbre_code(H,'d'));
@@ -58,27 +57,31 @@ int main (){
 
 	fprintf(stderr, "Affichage des Symboles:\n\n");
 
-	Symbole *s_b = Symbole_init();
-	Symbole *s_d = Symbole_init();
-	Symbole_code_char(s_b,'b');
+	Code_Symbole *s_b = Code_Symbole_init();
+	Code_Symbole *s_d = Code_Symbole_init();
+	Code_Symbole_code_char(s_b,'b');
 	fprintf(stderr, "Le code dans le buffer pour la lettre b : ");
-	Symbole_printBinaire(s_b);
+	Code_Symbole_printBinaire(s_b);
 	fprintf(stderr, "Dans le symbole: %c - %d\n", s_b->code, s_b->taille);
 
 	char * code = Arbre_code(H,'d');
-	Symbole_code(s_d,code,strlen(code));
+	char * code_fs = Arbre_code_FS(H);
+	Code_Symbole_code(s_d,code,strlen(code));
 	fprintf(stderr, "Le code dans le buffer pour la lettre d en prennant en compte l'arbre: ");
-	Symbole_printBinaire(s_d);
+	Code_Symbole_printBinaire(s_d);
 	fprintf(stderr, "Dans le symbole: %c - %d\n", s_d->code, s_d->taille);
 
 
-	fprintf(stderr, "Est-ce que j'ai un 1 à la position 4: %d\n", Symbole_code_position(s_d->code,1));
+	fprintf(stderr, "Est-ce que j'ai un 1 à la position 8: %d\n", Code_Symbole_code_position(s_d->code,8));
 
 	fprintf(stderr, "\nAffichage du Code buffer:\n");
-
+	Code_Symbole *s_fs = Code_Symbole_init();
+	Code_Symbole_code(s_fs, code_fs, strlen(code_fs));
+	fprintf(stderr, "Est-ce que j'ai un 1 à la position 8: %d\n", Code_Symbole_code_position(s_fs->code,8));
 
 	Code_buffer *cbf = Code_buffer_init();
 	
+	Code_buffer_transmettre(cbf,s_fs);
 	Code_buffer_transmettre(cbf,s_b);
 	Code_buffer_transmettre(cbf,s_d);
 	Code_buffer_printBinaire(cbf);
@@ -92,8 +95,8 @@ int main (){
 
 
 	fprintf(stderr, "\nOn libère les structures allouées.\n");
-	Symbole_detruire(s_b);
-	Symbole_detruire(s_d);
+	Code_Symbole_detruire(s_b);
+	Code_Symbole_detruire(s_d);
 	Arbre_detruire(H);
 
 

@@ -28,26 +28,43 @@ void Compression(int fd_entree, int fd_sortie){
 
 		char c = buff[i];
 		if(Arbre_recherche_char(H,c)){ //Si le caractère lu est dans l'arbre
-			Symbole *s = Symbole_init();
+			Code_Symbole *s = Code_Symbole_init();
 			char *code = Arbre_code(H,c);
-			Symbole_code(s,code,strlen(code));
+			Code_Symbole_code(s,code,strlen(code));
 			Code_buffer_transmettre(cbf,s);
+			Code_Symbole_printBinaire(s);
+			Code_Symbole_detruire(s);
 		}else{
-			Symbole *s = Symbole_init();
-			Symbole *s_fs = Symbole_init();
+			Code_Symbole *s = Code_Symbole_init();
+			Code_Symbole *s_fs = Code_Symbole_init();
 			char *code = Arbre_code_FS(H);
-			Symbole_code(s,code,strlen(code));
-			Symbole_code_char(s,c);
+			fprintf(stderr,"Code de la feuille: %s - %lu \n",code,strlen(code));
+			Code_Symbole_code(s_fs,code,strlen(code));
+			Code_Symbole_code_char(s,c);
 			Code_buffer_transmettre(cbf,s_fs);
 			Code_buffer_transmettre(cbf,s);
+			fprintf(stderr,"Code_Symbole de la feuille speciale: " );
+			Code_Symbole_printBinaire(s_fs);
+			fprintf(stderr,"Code Symbole du caractere: ");
+			Code_Symbole_printBinaire(s);
+			Code_Symbole_detruire(s);
+			Code_Symbole_detruire(s_fs);
 		}
 		Arbre_Modification(H,c);
 		i++;
 	}
 
+	Code_buffer_printBinaire(cbf);
+
 	if(write(fd_sortie,cbf->code_buffer,cbf->nb_octets)<0){
 		perror("write du fichier de sortie");
 		exit(2);
 	}
+	close(fd_entree);
+	close(fd_sortie);
+	Arbre_detruire(H);
+}
+
+void Decompression(int fd_entre, int fd_sortie){
 
 }

@@ -14,12 +14,17 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include "arbre.hpp"
-#include "symbole.hpp"
+#include "codage.hpp"
+
+/*---------------------------------------------
+ 	Definition des  entetes des fonctions
+	pour la compression et la decompression
+-----------------------------------------------*/
 
 //Prend le texte T et le compresse pour compresser
 void Compression(int fd_entree, int fd_sortie);
 
 //Prend le texte 
-void Decompression(FILE *entree, FILE *sortie);
+void Decompression(int fd_entree, int fd_sortie);
 
 #endif

@@ -12,11 +12,11 @@
 
 #include "arbre.hpp"
 
-typedef struct Symbole_t{
+typedef struct Code_Symbole_t{
 	char code; //Octet qui contient le code du symbole
 	int taille; //Combien de bits sont utilisés
 	
-} Symbole;
+} Code_Symbole;
 
 typedef struct Code_buffer_t{
 	char code_buffer[5000]; //La chaine de caractères qui code le texte
@@ -26,25 +26,25 @@ typedef struct Code_buffer_t{
 } Code_buffer;
 
 //Fonctions d'initialisation des structures
-Symbole * Symbole_init();
+Code_Symbole * Code_Symbole_init();
 Code_buffer * Code_buffer_init();
 
-void Symbole_detruire(Symbole *s);
+void Code_Symbole_detruire(Code_Symbole *s);
 void Code_buffer_detruire(Code_buffer *cbf);
 
 
 //Ecrit le code en bits du caractère c
-void Symbole_code_char(Symbole *s, char c);
+void Code_Symbole_code_char(Code_Symbole *s, char c);
 
 //Écrit le code en bits de la chaîne passée en paramètres et met à jour le nb de bits significatifs
-void Symbole_code(Symbole *s, char * code, int taille);
+void Code_Symbole_code(Code_Symbole *s, char * code, int taille);
 
-void Symbole_printBinaire(const Symbole *s);
+void Code_Symbole_printBinaire(const Code_Symbole *s);
 
-int Symbole_code_position(const char c, const int position);
+int Code_Symbole_code_position(const char c, const int position);
 
 //On écrit un symbole sur le buffer
-void Code_buffer_transmettre(Code_buffer *cbf, Symbole *s);
+void Code_buffer_transmettre(Code_buffer *cbf, Code_Symbole *s);
 
 //On écrit sur le fichier le code final obtenu
 void Code_buffer_fichier(Code_buffer * cbf, int * fd_out);
