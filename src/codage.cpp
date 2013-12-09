@@ -86,38 +86,34 @@ int Code_Symbole_code_position(const char c, const int position){
 }
 
 void Code_buffer_transmettre(Code_buffer *cbf, Code_Symbole *s){
-	int cpt = 8;
-
+	int position = 8;
 	if(s->taille > cbf->nb_bits){ // Si je dépasse l'octet courrant
 		int diff = s->taille - cbf->nb_bits;
-
 		//Ecrire sur ce qui reste de l'octet
-		for(int i=cbf->nb_bits;i>=0;i--){ //Boucle pour savoir où écrire le bit du caractère courant
-			if(Code_Symbole_code_position(s->code,cpt)) //Si le bit de la position cpt est à 1
-				cbf->code_buffer[cbf->octet_courant] |= (1 << (7-i));
+		for(int i=cbf->nb_bits;i>0;i--){ //Boucle pour savoir où écrire le bit du caractère courant
+			if(Code_Symbole_code_position(s->code,position)) //Si le bit de la position cpt est à 1
+				cbf->code_buffer[cbf->octet_courant] |= (1 << (8-i));
 			else
-				cbf->code_buffer[cbf->octet_courant] &= ~(1 << (7-i));
-			cpt--;
+				cbf->code_buffer[cbf->octet_courant] &= ~(1 << (8-i));
+			position--;
 		}
 		cbf->octet_courant++;
 		cbf->nb_octets++;
 		cbf->nb_bits = 8;
-
-			//On écrit sur le nouveau octet
-		for(int i=8;i>=8-diff;i--){
-			if(Code_Symbole_code_position(s->code,cpt))//Si le bit de la position cpt est à 1
+		//On écrit sur le nouveau octet
+		for(int i=8;i>8-diff;i--){
+			if(Code_Symbole_code_position(s->code,position))//Si le bit de la position cpt est à 1
 				cbf->code_buffer[cbf->octet_courant] |= (1 << (8-i));
 			else
 				cbf->code_buffer[cbf->octet_courant] &= ~(1 << (8-i));
 			cbf->nb_bits--;
-			cpt--;
+			position--;
 		}
 
 	}else{ //Si je ne depasse pas l'octet courant
-		int position = 8;
 		int diff = cbf->nb_bits - s->taille;
 	
-		for(int i=cbf->nb_bits;i>=diff;i--){
+		for(int i=cbf->nb_bits;i>diff;i--){
 			if(Code_Symbole_code_position(s->code,position)){//Si le bit de la position cpt est à 1
 				cbf->code_buffer[cbf->octet_courant] |= (1 << (8-i));
 			}else{
@@ -132,7 +128,7 @@ void Code_buffer_transmettre(Code_buffer *cbf, Code_Symbole *s){
 			cbf->nb_octets++;
 			cbf->nb_bits = 8;
 		}else{ //Sinon 
-			cbf->nb_bits -= s->taille+1;
+			cbf->nb_bits -= s->taille;
 		}
 	}
 }
@@ -142,4 +138,27 @@ void Code_buffer_printBinaire(const Code_buffer * cbf){
 		printBinaire_char(cbf->code_buffer[i]);
 	}
 	fprintf(stderr, " - nb octets %d - nb bits restants %d\n", cbf->nb_octets, cbf->nb_bits);
+}
+
+char Code_getLettre(const char b1, const char b2, const int shift){
+	char retour;
+	char tmp1 = b1, tmp2 = b2;
+	int position = shift;
+	for(int i=8;i>8-shift;i--){ //J'ecris sur les 8 - shift premiers bits
+		if(Code_Symbole_code_position(tmp1,position))
+			retour |= (1 << (8-i));
+		else
+			retour &= ~(1 << (8-i));
+		position --;
+	}
+	position = 8; //Puis sur le dernier
+	for(int i=8-shift;i>0;i--){
+		if(Code_Symbole_code_position(tmp1,position))
+			retour |= (1 << (8-i));
+		else
+			retour &= ~(1 << (8-i));
+		position --;	
+	}
+	
+	return retour;
 }

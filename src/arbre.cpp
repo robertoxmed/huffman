@@ -355,11 +355,9 @@ char * Arbre_code(const Arbre *H, Noeud *N){
 char * Arbre_code_FS(Arbre *H){
 	char *retour;
 	if(H->premiere_insertion){
-		fprintf(stderr,"Premiere insertion dans l' arbre\n");
 		retour = (char*)malloc(2*sizeof(char));
 		retour[0] = '0';
 		retour[1] = '\0';
-		fprintf(stderr,"Taille du retour %lu\n",strlen(retour));
 		return retour;
 	}
 	retour = Arbre_code(H,Arbre_get_feuilleSpeciale(H));

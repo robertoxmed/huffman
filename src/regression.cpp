@@ -25,7 +25,6 @@ int main (){
 	//Création d'un arbre vide et on l'affiche
 	H=Arbre_creerVide();
 	fprintf(stderr, "Arbre vide: %c %d\n", H->racine->caractere, H->racine->poids);
-	fprintf(stderr, "On test si c'est une feuille: %d\n", Noeud_estFeuille(H->racine));
 	H = Arbre_Modification(H,'a');
 	Arbre_affichage(H);
 	H = Arbre_Modification(H,'b');
@@ -51,6 +50,20 @@ int main (){
 	fprintf(stderr, "Le code de b : %s\n", Arbre_code(H,'b'));
 	fprintf(stderr, "Le code de d : %s\n", Arbre_code(H,'d'));
 
+
+	fprintf(stderr, "\nOn rajoute d'autres lettres au hassard: \n\n");
+	H = Arbre_Modification(H,'a');
+	H = Arbre_Modification(H,'z');
+
+	H = Arbre_Modification(H,'e');
+	H = Arbre_Modification(H,'f');
+	H = Arbre_Modification(H,'w');
+	H = Arbre_Modification(H,'h');
+
+
+	Arbre_affichage(H);
+
+	
 	fprintf(stderr, "\n---------------------------------------------\n");
 	fprintf(stderr, "-            Tests sur les symboles         -\n");
 	fprintf(stderr, "---------------------------------------------\n\n");
@@ -77,7 +90,6 @@ int main (){
 	fprintf(stderr, "\nAffichage du Code buffer:\n");
 	Code_Symbole *s_fs = Code_Symbole_init();
 	Code_Symbole_code(s_fs, code_fs, strlen(code_fs));
-	fprintf(stderr, "Est-ce que j'ai un 1 à la position 8: %d\n", Code_Symbole_code_position(s_fs->code,8));
 
 	Code_buffer *cbf = Code_buffer_init();
 	
@@ -93,6 +105,12 @@ int main (){
 
 	Compression(fd_entree,fd_sortie);
 
+	int fd2_entree = open("test.huffman", O_RDONLY);
+	int fd2_sortie = open("test.decompress", O_WRONLY|O_CREAT|O_TRUNC, 0600);
+
+	fprintf(stderr, "\nOn va decompresser le fichier \"test\" contenant abracadabra\n");
+
+	Decompression(fd2_entree,fd2_sortie);
 
 	fprintf(stderr, "\nOn libère les structures allouées.\n");
 	Code_Symbole_detruire(s_b);

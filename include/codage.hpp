@@ -25,6 +25,13 @@ typedef struct Code_buffer_t{
 	int nb_octets; //Le nombre d'octets écrits en total
 } Code_buffer;
 
+typedef struct Decode_buffer_t{
+	char decode_buffer[5000]; //La chaine de caractères qui code le texte
+	int nb_bits; //Le nombre de bits écrits sur l'octet courrant
+	int octet_courant; //Le nombre d'octets qui sont écrits actuellement
+	int nb_octets; //Le nombre d'octets écrits en total
+} Decode_buffer;
+
 //Fonctions d'initialisation des structures
 Code_Symbole * Code_Symbole_init();
 Code_buffer * Code_buffer_init();
@@ -50,5 +57,7 @@ void Code_buffer_transmettre(Code_buffer *cbf, Code_Symbole *s);
 void Code_buffer_fichier(Code_buffer * cbf, int * fd_out);
 
 void Code_buffer_printBinaire(const Code_buffer *cbf);
+
+char Code_getLettre(const char b1, const char b2, const int shift);
 
 #endif
