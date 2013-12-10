@@ -60,9 +60,19 @@ void Compression(int fd_entree, int fd_sortie){
 	Arbre_detruire(H);
 }
 
+int Maj_position (const int position, const int op){
+	int retour;
+	if(op>position)
+		retour = (op - position)%8;
+	else
+		retour = (position - op)%8;
+	return retour;
+}
+
 void Decompression(int fd_entree, int fd_sortie){
-	int i = 0, shift;
-	char buff[100];
+	int i = 0, position, taille_code = 0;
+	int total_char;
+	char buff[100], lettre;
 	Decode_buffer *dbf = Decode_buffer_init();
 	Arbre *H = Arbre_creerVide();
 	Noeud *N;
@@ -72,39 +82,45 @@ void Decompression(int fd_entree, int fd_sortie){
 		exit(1);
 	}
 	//je commence par lire la feuille spéciale et le premier caractère
-	char lettre = Code_getLettre(buff[0],buff[1],7);
-	buff_sortie[0] = lettre;
-	Arbre_Modification(H,lettre);
-
+	Decode_getLettre(dbf,buff[0],buff[1],7);
+	Arbre_Modification(H,dbf->decode_buffer[i]);
 	N = H->racine;
 
-	shift = 7;
-	fprintf(stderr, "lettre = %c\n", lettre);
-	i = 2;
-	while(i < total_char - 1){ //Tant que j'ai des caractères à lire
+	position = 7;
+	int position2 = position;
+	fprintf(stderr, "lettre = %c ", dbf->decode_buffer[i]);
+	i++;
+	while(i < total_char){ //Tant que j'ai des caractères à lire
 		char c1 = buff[i]; // Je prends le caractère courant
 		char c2 = buff[i+1];
-		int bit = Code_Symbole_code_position(c1,shift);
-		if (bit == 0)
-			N = N->filsGauche;
-		else
-			N = N->filsDroit;
-		if(Noeud_estFeuille(N)){
-			
-			if(N->caractere == '#')
-				lettre = Code_getLettre(c1,c2,shift--);
+		while(!Noeud_estFeuille(N)){
+			int bit = Code_Symbole_code_position(c1,position2--);
+			if (bit == 0)
+				N = N->filsGauche;
 			else
-				lettre = N->caractere;
-			buff_sortie[i] = lettre;
-			Arbre_Modification(H,lettre);
-			N = H->racine;
+				N = N->filsDroit;
+			taille_code++;
+		}
+		
+		if(N->caractere == '#'){
+			position = Maj_position(position,taille_code);
+			Decode_getLettre(dbf,c1,c2,position);
 			i++;
-		}	
-		fprintf(stderr, "lettre = %c\n", lettre);
-		
-		
+		}else{
+			lettre = N->caractere;
+			Decode_putLettre(dbf,lettre);
+			position = Maj_position(position, taille_code);
+			i++;
+		}
+		Arbre_Modification(H,dbf->decode_buffer[dbf->octet_courant-1]);
+		N = H->racine;
+		taille_code = 0;
+		fprintf(stderr, "lettre = %c ", dbf->decode_buffer[dbf->octet_courant-1]);
+
 	}
-	if(write(fd_sortie,buff_sortie,sizeof(buff_sortie))<0){
+	fprintf(stderr, "\n");
+	Arbre_affichage(H);
+	if(write(fd_sortie,dbf->decode_buffer,sizeof(dbf->octet_courant-1))<0){
 		perror("write du fichier de sortie");
 		exit(2);
 	}

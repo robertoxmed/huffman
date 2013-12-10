@@ -98,15 +98,15 @@ int main (){
 	Code_buffer_transmettre(cbf,s_d);
 	Code_buffer_printBinaire(cbf);
 
-	int fd_entree = open("test", O_RDONLY);
-	int fd_sortie = open("test.huffman", O_WRONLY|O_CREAT|O_TRUNC, 0600);
+	int fd_entree = open("demo/test", O_RDONLY);
+	int fd_sortie = open("demo/test.huffman", O_WRONLY|O_CREAT|O_TRUNC, 0600);
 
 	fprintf(stderr, "\nOn va compresser le fichier \"test\" contenant abracadabra\n");
 
 	Compression(fd_entree,fd_sortie);
 
-	int fd2_entree = open("test.huffman", O_RDONLY);
-	int fd2_sortie = open("test.decompress", O_WRONLY|O_CREAT|O_TRUNC, 0600);
+	int fd2_entree = open("demo/test.huffman", O_RDONLY);
+	int fd2_sortie = open("demo/test.decompress", O_WRONLY|O_CREAT|O_TRUNC, 0600);
 
 	fprintf(stderr, "\nOn va decompresser le fichier \"test\" contenant abracadabra\n");
 

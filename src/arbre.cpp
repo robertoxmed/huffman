@@ -41,7 +41,7 @@ Arbre* Arbre_creerVide(){
 }
 
 int Noeud_estFeuille(Noeud *N){
-	if(N->filsDroit==NULL && N->filsGauche==NULL && N->caractere!='#')
+	if(N->filsDroit==NULL && N->filsGauche==NULL )//&& N->caractere!='#')
 		return 1;
 	return 0;
 }
