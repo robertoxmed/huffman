@@ -1,7 +1,7 @@
 CC=clang++
 CFLAGS=-Wall -pedantic -g
 EXEC=huffman-regression huffman-dynamique
-TAR=MedinaRoberto.huffman-dynamique
+TAR=ProjetHuffman
 
 all: $(EXEC)
 
@@ -30,7 +30,7 @@ clean:
 	rm -rf obj/*.o vgcore* bin/*
 
 tar:
-	tar -cvf - ../$(TAR) | gzip >../$(TAR).tgz
+	tar -cvf - ../$(TAR) | gzip > ../MedinaRoberto.$(TAR).tgz
 
 package: clean tar
 	

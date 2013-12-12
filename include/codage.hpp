@@ -31,9 +31,9 @@ typedef struct Code_buffer_t{
 } Code_buffer;
 
 typedef struct Decode_buffer_t{
-	char decode_buffer[5000]; //La chaine de caractères avec le texte decompressé
-	int shift;
-	int octet_courant; //Pour se reperer dans le buffer
+	char code_buffer[100]; //Le texte compressé
+	int position; //Position du prochain bit à lire
+	int octet_courant; //Pour se reperer dans le buffer du texte compressé
 } Decode_buffer;
 
 /*------------------------------------------

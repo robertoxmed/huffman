@@ -34,9 +34,7 @@ int main(int argc, char ** argv){
 		
 		Compression(fd_in,fd_out);
 
-	}
-
-	if(argv[1][1] == 'd'){ //Quand on veut decompresser un fichier
+	}else if(argv[1][1] == 'd'){ //Quand on veut decompresser un fichier
 		if((fd_in = open(argv[2],O_RDONLY)) == -1){
 			perror("open fd_in");
 			exit(1);
@@ -48,9 +46,11 @@ int main(int argc, char ** argv){
 		
 		Decompression(fd_in,fd_out);
 
+	}else{
+		fprintf(stderr, "Usage %s -[cd] <fichier entrée> <fichier sortie>\n", argv[0]);
+ 		return EXIT_FAILURE;
 	}
 
-	
 
  	return EXIT_SUCCESS;
 }

@@ -113,6 +113,10 @@ int main (){
 	Decompression(fd2_entree,fd2_sortie);
 
 	fprintf(stderr, "\nOn libère les structures allouées.\n");
+	close(fd_entree);
+	close(fd_sortie);
+	close(fd2_entree);
+	close(fd2_sortie);
 	Code_Symbole_detruire(s_b);
 	Code_Symbole_detruire(s_d);
 	Arbre_detruire(H);

@@ -63,9 +63,10 @@ void Compression(int fd_entree, int fd_sortie){
 int Maj_position (const int position, const int op){
 	int retour;
 	if(op>position)
-		retour = (op - position)%8;
+		retour = (8 - (op - position))%9;
 	else
-		retour = (position - op)%8;
+		retour = (position - op)%9;
+	fprintf(stderr, "Retour = %d\n", retour);
 	return retour;
 }
 
@@ -92,7 +93,7 @@ void Decompression(int fd_entree, int fd_sortie){
 	i++;
 	while(i < total_char){ //Tant que j'ai des caractères à lire
 		char c1 = buff[i]; // Je prends le caractère courant
-		char c2 = buff[i+1];
+		char c2 = buff[i+1]; //Et le suivant quand je dois lire un code sur deux octets soujacents
 		while(!Noeud_estFeuille(N)){
 			int bit = Code_Symbole_code_position(c1,position2--);
 			if (bit == 0)
@@ -109,17 +110,19 @@ void Decompression(int fd_entree, int fd_sortie){
 		}else{
 			lettre = N->caractere;
 			Decode_putLettre(dbf,lettre);
+			if(taille_code >= position) i++;
 			position = Maj_position(position, taille_code);
-			i++;
 		}
 		Arbre_Modification(H,dbf->decode_buffer[dbf->octet_courant-1]);
 		N = H->racine;
 		taille_code = 0;
+		position2 = position;
 		fprintf(stderr, "lettre = %c ", dbf->decode_buffer[dbf->octet_courant-1]);
 
 	}
 	fprintf(stderr, "\n");
 	Arbre_affichage(H);
+
 	if(write(fd_sortie,dbf->decode_buffer,sizeof(dbf->octet_courant-1))<0){
 		perror("write du fichier de sortie");
 		exit(2);

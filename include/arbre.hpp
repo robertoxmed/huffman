@@ -22,7 +22,7 @@
 typedef struct Noeud_t {
 	
 	unsigned int poids;
-	unsigned char caractere; //Je devrais mettre un symbole generique
+	unsigned char caractere;
 
 	Noeud_t *pere;
 
@@ -31,6 +31,7 @@ typedef struct Noeud_t {
 
 	//Ce pointeur et entier permettent vérifier la propiété GDBH
 	Noeud_t *suivant;
+	Noeud_t *precedant; //On a une liste doublement chaînée
 
 } Noeud;
 
@@ -40,6 +41,7 @@ typedef struct Arbre_t
 	Noeud *feuilleSpeciale;
 	
 	int premiere_insertion;
+	char caracteres[256]; //Tableau qui contient les caractères de l'abre
 
 } Arbre;
 
@@ -70,6 +72,8 @@ Noeud* Noeud_get_filsDroit(const Noeud *N);
 Noeud* Noeud_get_pere(const Noeud *N);
 //Renvoie un pointeur sur le suivant du Noeud
 Noeud* Noeud_get_suivant(const Noeud *N);
+//Renvoie un pointeur sur le précédant du Noeud
+Noeud* Noeud_get_precedant(const Noeud *N);
 //Renvoie le caractère du Noeud
 unsigned char Noeud_get_char(const Noeud *N);
 //Renvoie le poids du Noeud
@@ -81,7 +85,7 @@ unsigned int Noeud_get_poids(const Noeud *N);
 
 //Pour initialiser tous les pointeurs du Noeud N
 void Noeud_set_allPointers(Noeud *N, Noeud *fg, Noeud *fd,
-	 Noeud *suivant, Noeud * pere);
+	 Noeud *suivant, Noeud *precedant, Noeud * pere);
 //Pour initialiser les valeurs du Noeud N
 void Noeud_set_allValues(Noeud *N, unsigned char c, unsigned int p);
 
@@ -111,6 +115,7 @@ Noeud* Arbre_finBloc(const Arbre *H, Noeud *N);
 //Affichage de l'arbre de Huffman
 void Arbre_affichage(const Arbre *H);
 
+//Recherche un caractère dans l'arbre de Huffman
 int Arbre_recherche_char(Arbre *H, unsigned char c);
 
 

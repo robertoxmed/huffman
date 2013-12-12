@@ -22,6 +22,7 @@ Noeud* Noeud_creerVide(){
 	retour->filsDroit = NULL;
 	retour->filsGauche = NULL;
 	retour->suivant = NULL;
+	retour->precedant = NULL;
 
 	return retour;
 }
@@ -128,11 +129,12 @@ Noeud* Arbre_get_feuille(Arbre *H, const unsigned char c){
 }
 
 void Noeud_set_allPointers(Noeud *N, Noeud *fg, Noeud *fd,
-	 Noeud *suivant, Noeud * pere){
+	 Noeud *suivant, Noeud *precedant, Noeud * pere){
 	if( N!= NULL){
 		N->filsGauche = fg;
 		N->filsDroit = fd;
 		N->suivant = suivant;
+		N->precedant = precedant;
 		N->pere = pere;
 	}
 }
@@ -163,24 +165,23 @@ int Arbre_recherche_char(Arbre *H, unsigned char c){
 	return Noeud_recherche_char(H->racine,c);
 }
 
-void Noeud_recup_Noeuds(Noeud *N, vector<Noeud*> &v){
-	if(N!=NULL){
-		v.push_back(N);
-		Noeud_recup_Noeuds(Noeud_get_filsGauche(N),v);
-		Noeud_recup_Noeuds(Noeud_get_filsDroit(N),v);	
-	}
-}
-
 //Change la structure de l'arbre => va falloir mettre à jour les pointeurs sur suivant
 void Noeud_echanger(Arbre *H, Noeud *N, Noeud* M){ 
 	Noeud *Q = Noeud_get_pere(N);
 	Noeud *P = Noeud_get_pere(M);
-	Noeud *suivantTmp;
+	Noeud *suivantTmp, *precedantTmp;
 
+	//Dynamique sur la liste doublement chaînée
 	suivantTmp = N->suivant;
+	precedantTmp = M->precedant;
+	suivantTmp->precedant = M;
+	precedantTmp->suivant = N;
 	M->suivant = suivantTmp;
-	N->suivant = M;
+	N->suivant = M;	
+	N->precedant = precedantTmp;
+	
 
+	//Dynamique sur l'arbre
 	if(Noeud_get_filsGauche(Q) == N){
 		Q->filsGauche = M;
 		M->pere = Q;
@@ -206,28 +207,24 @@ void Noeud_echanger(Arbre *H, Noeud *N, Noeud* M){
 
 Arbre* Arbre_Traitement(Arbre *H, Noeud *Q){
 	vector<Noeud*> Gamma_Q; //Le chemin à la racine
-	vector<int> Gamma_x;
 	Noeud *P = Q;
 	int echanger = 0;
 	int indice;
 
 	if(P == H->racine){
 		Gamma_Q.push_back(P);
-		Gamma_x.push_back(Noeud_get_poids(P));
 	}else{
 		while(P != H->racine){
 			Gamma_Q.push_back(P);
-			Gamma_x.push_back(Noeud_get_poids(P));
 			P = Noeud_get_pere(P);
 		}
 		Gamma_Q.push_back(P);
-		Gamma_x.push_back(Noeud_get_poids(P));
 	}
 
 	//Parcourir les valeurs de Gamma_Q, verifier P
-	if(Gamma_x.size()!=1){
-		for(int i=0;i<Gamma_x.size()-1;i++){
-			if(Gamma_x[i]>=Noeud_get_poids(Noeud_get_suivant(Gamma_Q[i]))){
+	if(Gamma_Q.size()!=1){
+		for(unsigned int i=0;i<Gamma_Q.size()-1;i++){
+			if(Noeud_get_poids(Gamma_Q[i])>=Noeud_get_poids(Noeud_get_suivant(Gamma_Q[i]))){
 				echanger = 1;
 				indice = i;
 				break;
@@ -236,7 +233,7 @@ Arbre* Arbre_Traitement(Arbre *H, Noeud *Q){
 	}
 	
 	if(echanger == 0){ //Si P satisfaite on incrémente les poids
-		for(int i=0;i<Gamma_x.size();i++){
+		for(unsigned int i=0;i<Gamma_Q.size();i++){
 			Gamma_Q[i]->poids++;
 		}	
 	}else{	//Sinon echanger apres avoir incrémenté les incrémentables
@@ -262,15 +259,17 @@ Arbre* Arbre_Modification(Arbre *H, unsigned char c){
 
 		Noeud *N = Noeud_creerVide();
 		Noeud_set_allValues(N,c,1);
+
 		//Dynamique des pointeurs
 		Noeud_set_allPointers(Arbre_get_feuilleSpeciale(H),NULL,NULL,
-			N,N_interne);
+			N,NULL,N_interne);
+
 
 		Noeud_set_allPointers(N,NULL,NULL,
-			N_interne,N_interne);
+			N_interne,Arbre_get_feuilleSpeciale(H),N_interne);
 
 		Noeud_set_allPointers(N_interne,Arbre_get_feuilleSpeciale(H),N,
-			NULL,NULL);
+			NULL,N,NULL);
 
 		H->racine = N_interne;
 		H->racine->suivant = NULL;
@@ -289,13 +288,13 @@ Arbre* Arbre_Modification(Arbre *H, unsigned char c){
 		//Dynamique des pointeurs
 		Q->filsGauche = N_interne;
 		Noeud_set_allPointers(N_interne,Arbre_get_feuilleSpeciale(H),N,
-			Noeud_get_filsDroit(Q),Q);
+			Noeud_get_filsDroit(Q),N,Q);
 
 		Noeud_set_allPointers(N,NULL,NULL,
-			Noeud_get_suivant(Arbre_get_feuilleSpeciale(H)),N_interne);
+			Noeud_get_suivant(Arbre_get_feuilleSpeciale(H)),Arbre_get_feuilleSpeciale(H),N_interne);
 
 		Noeud_set_allPointers(Arbre_get_feuilleSpeciale(H),NULL,NULL,
-			N,N_interne);
+			N,NULL,N_interne);
 		return Arbre_Traitement(H,Q);
 
 	}else{//Si le caractère est dans l'arbre
@@ -317,7 +316,6 @@ Noeud* Arbre_finBloc(const Arbre *H, Noeud *N){
 		return N;
 	}
 	while(poids == Noeud_get_poids(P) && P->suivant!=NULL){
-		//Noeud_affichage(P);
 		Q = P;
 		P = P->suivant;
 	}
@@ -345,7 +343,7 @@ char * Arbre_code(const Arbre *H, Noeud *N){
 	buff[i+1]='\0';
 	code = (char *)malloc(i*sizeof(char));
 	//On inverse le code
-	for(int j=0;j<strlen(buff);j++){
+	for(unsigned int j=0;j<strlen(buff);j++){
 		code[j]=buff[strlen(buff)-j-1];
 	}
 	code[strlen(buff)]='\0';

@@ -29,7 +29,6 @@ Code_buffer * Code_buffer_init(){
 Decode_buffer * Decode_buffer_init(){
 	Decode_buffer * retour;
 	retour = (Decode_buffer*)malloc(sizeof(Decode_buffer));
-	retour->shift = 0;
 	retour->octet_courant = 0;
 	return retour;
 }
