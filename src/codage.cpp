@@ -29,6 +29,7 @@ Code_buffer * Code_buffer_init(){
 Decode_buffer * Decode_buffer_init(){
 	Decode_buffer * retour;
 	retour = (Decode_buffer*)malloc(sizeof(Decode_buffer));
+	retour->position_bit = 8;
 	retour->octet_courant = 0;
 	return retour;
 }
@@ -156,28 +157,46 @@ void Code_buffer_printBinaire(const Code_buffer * cbf){
 	fprintf(stderr, " - nb octets %d - nb bits restants %d\n", cbf->nb_octets, cbf->nb_bits);
 }
 
-void Decode_getLettre(Decode_buffer * dbf, const char b1, const char b2, const int shift){
-	char tmp1 = b1, tmp2 = b2;
-	int position = shift;
-	for(int i=8;i>8-shift;i--){ //J'ecris sur les 8 - shift premiers bits
-		if(Code_Symbole_code_position(tmp1,position))
-			dbf->decode_buffer[dbf->octet_courant] |= (1 << (8-i));
-		else
-			dbf->decode_buffer[dbf->octet_courant] &= ~(1 << (8-i));
-		position --;
-	}
-	position = 8; //Puis sur le dernier
-	for(int i=8-shift;i>0;i--){
-		if(Code_Symbole_code_position(tmp2,position))
-			dbf->decode_buffer[dbf->octet_courant] |= (1 << (8-i));
-		else
-			dbf->decode_buffer[dbf->octet_courant] &= ~(1 << (8-i));
-		position --;	
-	}
-	dbf->octet_courant++;
+void Decode_Next(Decode_buffer *dbf){
+	if(dbf->position_bit == 1){
+		dbf->position_bit = 8;
+		dbf->octet_courant++;
+	}else
+		dbf->position_bit--;
 }
 
-void Decode_putLettre(Decode_buffer *dbf, char l){
-	dbf->decode_buffer[dbf->octet_courant] = l;
-	dbf->octet_courant++;
+int Decode_get_Next(Decode_buffer *dbf){
+	if(dbf->decode_buffer[dbf->octet_courant] & (1<<(8-dbf->position_bit))){
+		Decode_Next(dbf);
+		return 1;
+	}
+	Decode_Next(dbf);
+	return 0;
+}
+
+char Decode_getLettre(Decode_buffer *dbf){
+	if(dbf->position_bit == 8) //Je renvoie tout l'octet
+		return dbf->decode_buffer[dbf->octet_courant++];
+	else{
+		char retour = 0;
+		int position = dbf->position_bit;
+		for(int i=8;i>8-dbf->position_bit;i--){ //J'ecris sur les 8 - shift premiers bits
+			if(Code_Symbole_code_position(dbf->decode_buffer[dbf->octet_courant],position))
+				retour |= (1 << (8-i));
+			else
+				retour &= ~(1 << (8-i));
+			position--;
+		}
+		position = 8;
+		for(int i=8-dbf->position_bit;i>0;i--){
+			if(Code_Symbole_code_position(dbf->decode_buffer[dbf->octet_courant+1],position))
+				retour |= (1 << (8-i));
+			else
+				retour &= ~(1 << (8-i));
+			position--;
+		}
+		dbf->octet_courant++;
+		return retour;
+	}
+
 }

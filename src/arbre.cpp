@@ -37,12 +37,14 @@ Arbre* Arbre_creerVide(){
 	H->feuilleSpeciale->pere = H->feuilleSpeciale;
 
 	H->premiere_insertion = 1;
+	memset(H->caracteres,0,sizeof(H->caracteres));
+	H->nb_caracteres = 0;
 
 	return H;
 }
 
 int Noeud_estFeuille(Noeud *N){
-	if(N->filsDroit==NULL && N->filsGauche==NULL )//&& N->caractere!='#')
+	if(N->filsDroit==NULL && N->filsGauche==NULL )
 		return 1;
 	return 0;
 }
@@ -150,19 +152,12 @@ void Noeud_set_allValues(Noeud *N, const unsigned char c, const unsigned int p){
 	}
 }
 
-int Noeud_recherche_char(Noeud *N, unsigned char c){
-	if(N!=NULL){
-		if(Noeud_get_char(N)==c)
+int Arbre_recherche_char(Arbre *H, unsigned char c){
+	for(int i=0;i<H->nb_caracteres;i++){
+		if(H->caracteres[i] == c)
 			return 1;
-		else{
-			return Noeud_recherche_char(Noeud_get_filsDroit(N),c) || Noeud_recherche_char(Noeud_get_filsGauche(N),c);
-		}
 	}
 	return 0;
-}
-
-int Arbre_recherche_char(Arbre *H, unsigned char c){
-	return Noeud_recherche_char(H->racine,c);
 }
 
 //Change la structure de l'arbre => va falloir mettre à jour les pointeurs sur suivant
@@ -170,16 +165,6 @@ void Noeud_echanger(Arbre *H, Noeud *N, Noeud* M){
 	Noeud *Q = Noeud_get_pere(N);
 	Noeud *P = Noeud_get_pere(M);
 	Noeud *suivantTmp, *precedantTmp;
-
-	//Dynamique sur la liste doublement chaînée
-	suivantTmp = N->suivant;
-	precedantTmp = M->precedant;
-	suivantTmp->precedant = M;
-	precedantTmp->suivant = N;
-	M->suivant = suivantTmp;
-	N->suivant = M;	
-	N->precedant = precedantTmp;
-	
 
 	//Dynamique sur l'arbre
 	if(Noeud_get_filsGauche(Q) == N){
@@ -203,6 +188,18 @@ void Noeud_echanger(Arbre *H, Noeud *N, Noeud* M){
 			N->pere = P;
 		}
 	}
+	
+	//Dynamique sur la liste doublement chaînée
+	suivantTmp = N->suivant;
+	precedantTmp = M->precedant;
+	suivantTmp->precedant = M;
+	precedantTmp->suivant = N;
+	M->suivant = suivantTmp;
+	N->suivant = M;	
+	N->precedant = precedantTmp;
+	
+
+	
 }
 
 Arbre* Arbre_Traitement(Arbre *H, Noeud *Q){
@@ -271,6 +268,7 @@ Arbre* Arbre_Modification(Arbre *H, unsigned char c){
 		Noeud_set_allPointers(N_interne,Arbre_get_feuilleSpeciale(H),N,
 			NULL,N,NULL);
 
+		H->caracteres[H->nb_caracteres++] = c;
 		H->racine = N_interne;
 		H->racine->suivant = NULL;
 		H->premiere_insertion = 0;
@@ -295,6 +293,7 @@ Arbre* Arbre_Modification(Arbre *H, unsigned char c){
 
 		Noeud_set_allPointers(Arbre_get_feuilleSpeciale(H),NULL,NULL,
 			N,NULL,N_interne);
+		H->caracteres[H->nb_caracteres++] = c;
 		return Arbre_Traitement(H,Q);
 
 	}else{//Si le caractère est dans l'arbre

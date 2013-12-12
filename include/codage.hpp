@@ -31,8 +31,8 @@ typedef struct Code_buffer_t{
 } Code_buffer;
 
 typedef struct Decode_buffer_t{
-	char code_buffer[100]; //Le texte compressé
-	int position; //Position du prochain bit à lire
+	char decode_buffer[100]; //Le texte compressé
+	int position_bit; //Position du prochain bit à lire
 	int octet_courant; //Pour se reperer dans le buffer du texte compressé
 } Decode_buffer;
 
@@ -84,11 +84,13 @@ void Code_buffer_printBinaire(const Code_buffer *cbf);
 				le decodage
 ----------------------------------------------*/
 
-//Cette fonction est utilisée quand le code dépasse un octet
-void Decode_getLettre(Decode_buffer * dbf, const char b1, const char b2, const int shift);
+//Décale la position de un et decale dans le buffer si besoin
+void Decode_Next(Decode_buffer * dbf);
 
-void Decode_putLettre(Decode_buffer *dbf, char l);
+//Renvoie un si le prochain bit est à 1
+int Decode_get_Next(Decode_buffer *dbf);
 
-void Decode_buffer_printAscii(const Decode_buffer *dbf);
+//Renvoie le caractère
+char Decode_getLettre(Decode_buffer *dbf);
 
 #endif

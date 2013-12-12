@@ -42,6 +42,7 @@ typedef struct Arbre_t
 	
 	int premiere_insertion;
 	char caracteres[256]; //Tableau qui contient les caractères de l'abre
+	int nb_caracteres;
 
 } Arbre;
 
