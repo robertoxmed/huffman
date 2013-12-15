@@ -24,14 +24,14 @@ typedef struct Code_Symbole_t{
 } Code_Symbole;
 
 typedef struct Code_buffer_t{
-	char code_buffer[100]; //La chaine de caractères qui code le texte
+	char code_buffer[5000]; //La chaine de caractères qui code le texte
 	int nb_bits; //Le nombre de bits écrits sur l'octet courrant
 	int octet_courant; //Le nombre d'octets qui sont écrits actuellement
 	int nb_octets; //Le nombre d'octets écrits en total
 } Code_buffer;
 
 typedef struct Decode_buffer_t{
-	char decode_buffer[100]; //Le texte compressé
+	char decode_buffer[5000]; //Le texte compressé
 	int position_bit; //Position du prochain bit à lire
 	int octet_courant; //Pour se reperer dans le buffer du texte compressé
 } Decode_buffer;

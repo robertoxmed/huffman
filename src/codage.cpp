@@ -41,18 +41,12 @@ void Code_Symbole_detruire (Code_Symbole *s){
 
 void Code_buffer_detruire (Code_buffer *cbf){
 	if( cbf != NULL ){
-		for(int i=0;i<cbf->nb_octets;i++){
-			free(&cbf->code_buffer[i]);
-		}
 		free(cbf);
 	}
 }
 
 void Decode_buffer_detruire (Decode_buffer *dbf){
 	if( dbf != NULL ){
-		for(int i=0;i<dbf->octet_courant;i++){
-			free(&dbf->decode_buffer[i]);
-		}
 		free(dbf);
 	}
 }
@@ -166,7 +160,7 @@ void Decode_Next(Decode_buffer *dbf){
 }
 
 int Decode_get_Next(Decode_buffer *dbf){
-	if(dbf->decode_buffer[dbf->octet_courant] & (1<<(8-dbf->position_bit))){
+	if(Code_Symbole_code_position(dbf->decode_buffer[dbf->octet_courant],dbf->position_bit)){
 		Decode_Next(dbf);
 		return 1;
 	}

@@ -49,20 +49,6 @@ int main (){
 	fprintf(stderr, "\nLe code de a : %s\n", Arbre_code(H,'a'));
 	fprintf(stderr, "Le code de b : %s\n", Arbre_code(H,'b'));
 	fprintf(stderr, "Le code de d : %s\n", Arbre_code(H,'d'));
-
-
-	fprintf(stderr, "\nOn rajoute d'autres lettres au hassard: \n\n");
-	H = Arbre_Modification(H,'a');
-	H = Arbre_Modification(H,'z');
-
-	H = Arbre_Modification(H,'e');
-	H = Arbre_Modification(H,'f');
-	H = Arbre_Modification(H,'w');
-	H = Arbre_Modification(H,'h');
-
-
-	Arbre_affichage(H);
-
 	
 	fprintf(stderr, "\n---------------------------------------------\n");
 	fprintf(stderr, "-            Tests sur les symboles         -\n");
@@ -87,11 +73,13 @@ int main (){
 
 	fprintf(stderr, "Est-ce que j'ai un 1 à la position 8: %d\n", Code_Symbole_code_position(s_d->code,8));
 
-	fprintf(stderr, "\nAffichage du Code buffer:\n");
 	Code_Symbole *s_fs = Code_Symbole_init();
 	Code_Symbole_code(s_fs, code_fs, strlen(code_fs));
-
+	fprintf(stderr, "Le code de la feuille spéciale = %s\n", code_fs);
 	Code_buffer *cbf = Code_buffer_init();
+
+	fprintf(stderr, "\nAffichage du Code buffer:\n");
+	
 	
 	Code_buffer_transmettre(cbf,s_fs);
 	Code_buffer_transmettre(cbf,s_b);

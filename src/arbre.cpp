@@ -160,11 +160,24 @@ int Arbre_recherche_char(Arbre *H, unsigned char c){
 	return 0;
 }
 
+void Arbre_maj_racine(Arbre *H){
+	H->racine->pere = NULL;
+}
+
 //Change la structure de l'arbre => va falloir mettre à jour les pointeurs sur suivant
 void Noeud_echanger(Arbre *H, Noeud *N, Noeud* M){ 
 	Noeud *Q = Noeud_get_pere(N);
 	Noeud *P = Noeud_get_pere(M);
 	Noeud *suivantTmp, *precedantTmp;
+
+	//Dynamique sur la liste doublement chaînée
+	suivantTmp = N->suivant;
+	precedantTmp = M->precedant;
+	suivantTmp->precedant = M;
+	precedantTmp->suivant = N;
+	M->suivant = suivantTmp;
+	N->suivant = M;	
+	N->precedant = precedantTmp;
 
 	//Dynamique sur l'arbre
 	if(Noeud_get_filsGauche(Q) == N){
@@ -188,18 +201,6 @@ void Noeud_echanger(Arbre *H, Noeud *N, Noeud* M){
 			N->pere = P;
 		}
 	}
-	
-	//Dynamique sur la liste doublement chaînée
-	suivantTmp = N->suivant;
-	precedantTmp = M->precedant;
-	suivantTmp->precedant = M;
-	precedantTmp->suivant = N;
-	M->suivant = suivantTmp;
-	N->suivant = M;	
-	N->precedant = precedantTmp;
-	
-
-	
 }
 
 Arbre* Arbre_Traitement(Arbre *H, Noeud *Q){
@@ -207,7 +208,6 @@ Arbre* Arbre_Traitement(Arbre *H, Noeud *Q){
 	Noeud *P = Q;
 	int echanger = 0;
 	int indice;
-
 	if(P == H->racine){
 		Gamma_Q.push_back(P);
 	}else{
@@ -237,10 +237,10 @@ Arbre* Arbre_Traitement(Arbre *H, Noeud *Q){
 		Noeud *m = Gamma_Q[indice];
 		Noeud *b = Arbre_finBloc(H,m);
 
-		for(int i=0;i<indice;i++){
+		for(int i=0;i<=indice;i++){
 			Gamma_Q[i]->poids++;
 		}
-		m->poids++;
+		//m->poids++;
 		Noeud_echanger(H,b,m);
 		return(Arbre_Traitement(H,Noeud_get_pere(m)));
 	}

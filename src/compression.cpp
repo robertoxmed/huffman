@@ -12,7 +12,7 @@
 
 void Compression(int fd_entree, int fd_sortie){
 	int i = 0;
-	char buff[100];
+	char buff[5000];
 	int total_char = 0;
 	Code_buffer * cbf = Code_buffer_init();
 	Arbre *H = Arbre_creerVide();
@@ -22,7 +22,6 @@ void Compression(int fd_entree, int fd_sortie){
 		exit(1);
 	}
 	while(i < total_char-1){ //Tant que j'ai des caractères à lire
-
 		char c = buff[i];
 		if(Arbre_recherche_char(H,c)){ //Si le caractère lu est dans l'arbre
 			Code_Symbole *s = Code_Symbole_init();
@@ -58,15 +57,14 @@ void Compression(int fd_entree, int fd_sortie){
 	close(fd_entree);
 	close(fd_sortie);
 	Arbre_detruire(H);
+	Code_buffer_detruire(cbf);
+
 }
-
-
-
 
 void Decompression(int fd_entree, int fd_sortie){
 	int i = 0;
 	int total_char;
-	char buff[500], lettre;
+	char buff[5000], lettre;
 	Decode_buffer *dbf = Decode_buffer_init();
 	Arbre *H = Arbre_creerVide();
 	Noeud *N;
@@ -83,11 +81,10 @@ void Decompression(int fd_entree, int fd_sortie){
 	buff[i] = lettre;
 	Arbre_Modification(H,lettre);
 
-	N = H->racine;
-
 	fprintf(stderr, "lettre = %c ", buff[i]);
 	i++;
-	while(i < total_char){ //Tant que j'ai des caractères à lire
+	N = H->racine;
+	while(dbf->octet_courant < total_char+1){ //Tant que j'ai des caractères à lire
 
 		while(!Noeud_estFeuille(N)){
 			int bit = Decode_get_Next(dbf);
@@ -111,12 +108,14 @@ void Decompression(int fd_entree, int fd_sortie){
 	fprintf(stderr, "\n");
 	Arbre_affichage(H);
 
-	if(write(fd_sortie,buff,sizeof(buff))<0){
+	if(write(fd_sortie,buff,i-1)<0){
 		perror("write du fichier de sortie");
 		exit(2);
 	}
 	close(fd_entree);
 	close(fd_sortie);
 	Arbre_detruire(H);
+	Decode_buffer_detruire(dbf);
+
 }
 
