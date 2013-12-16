@@ -151,6 +151,10 @@ void Code_buffer_printBinaire(const Code_buffer * cbf){
 	fprintf(stderr, " - nb octets %d - nb bits restants %d\n", cbf->nb_octets, cbf->nb_bits);
 }
 
+int Code_get_nb_char(const Code_buffer *cbf){
+	return cbf->nb_octets;
+}
+
 void Decode_Next(Decode_buffer *dbf){
 	if(dbf->position_bit == 1){
 		dbf->position_bit = 8;

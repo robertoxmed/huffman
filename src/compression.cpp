@@ -49,8 +49,7 @@ void Compression(int fd_entree, int fd_sortie){
 	}
 	Arbre_affichage(H);
 	Code_buffer_printBinaire(cbf);
-
-	if(write(fd_sortie,cbf->code_buffer,cbf->nb_octets)<0){
+	if(write(fd_sortie,cbf->code_buffer,Code_get_nb_char(cbf))==0){
 		perror("write du fichier de sortie");
 		exit(2);
 	}
@@ -79,9 +78,10 @@ void Decompression(int fd_entree, int fd_sortie){
 	Decode_Next(dbf);
 	lettre = Decode_getLettre(dbf);
 	buff[i] = lettre;
+	fprintf(stderr, "lettre = %c ", buff[i]);
+
 	Arbre_Modification(H,lettre);
 
-	fprintf(stderr, "lettre = %c ", buff[i]);
 	i++;
 	N = H->racine;
 	while(dbf->octet_courant < total_char+1){ //Tant que j'ai des caractères à lire

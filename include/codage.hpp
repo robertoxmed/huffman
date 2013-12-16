@@ -73,11 +73,10 @@ int Code_Symbole_code_position(const char c, const int position);
 //On écrit un symbole sur le buffer
 void Code_buffer_transmettre(Code_buffer *cbf, Code_Symbole *s);
 
-//On écrit sur le fichier le code final obtenu
-void Code_buffer_fichier(Code_buffer * cbf, int * fd_out);
-
 //Affiche en binaire le code buffer qui va aller sur le fichier après compression
 void Code_buffer_printBinaire(const Code_buffer *cbf);
+
+int Code_get_nb_char(const Code_buffer *cbf);
 
 /*------------------------------------------
 		Fonctions utilitaire pour

@@ -13,25 +13,25 @@ Fichiers inclus
 ----------------------------------------------
 
 src:
-	arbre.cpp:
+	arbre.cpp
 
-	regression.cpp:
+	regression.cpp
 
-	compression.cpp:
+	compression.cpp
 
-	symbole.cpp:
+	codage.cpp
 
-	main.cpp:
+	main.cpp
 
 obj: - Aucun fichier.
 	make va mettre les *.o dans ce dossier
 
 include:
-	arbre.hpp:
+	arbre.hpp
 
-	compression.hpp:
+	compression.hpp
 
-	symbole.hpp:
+	codage.hpp
 
 bin: - Aucun fichier
 	make va mettre les éxécutables dans ce dossier
@@ -48,10 +48,9 @@ Directives du Makefile
 
 all: Crée l'éxécutable pour le main et le test de regression
 
-huffman-dynamique:
+huffman-dynamique: Crée le programme principal
 
-huffman-regression:
-
+huffman-regression: Crée les tests de regression pour le programme
 
 tar: Crée le tar avec le bon nommage et le comprime utilisant gzip
 
